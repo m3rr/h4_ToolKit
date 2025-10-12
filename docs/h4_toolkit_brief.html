@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>h4 Toolkit :: Cyberpunk Ops Dossier</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg-primary: #05060d;
+      --bg-secondary: #111424;
+      --bg-panel: #15192e;
+      --text-primary: #f8f8ff;
+      --text-secondary: #a9b2d6;
+      --accent: #ffd300;
+      --accent-muted: rgba(255, 211, 0, 0.45);
+      --glow: 0 0 25px rgba(255, 211, 0, 0.6);
+      --mono: "Fira Code", "Cascadia Code", "Source Code Pro", monospace;
+      font-family: "Rajdhani", "Segoe UI", sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--bg-primary), #090c1d 45%, #06050d 100%);
+      color: var(--text-primary);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 3rem 4vw 1rem;
+      position: relative;
+      background: radial-gradient(circle at top left, rgba(255, 211, 0, 0.18), transparent 55%);
+    }
+
+    header h1 {
+      font-size: clamp(2.5rem, 5vw, 3.8rem);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin: 0 0 0.5rem;
+      color: var(--accent);
+      text-shadow: var(--glow);
+    }
+
+    header p {
+      color: var(--text-secondary);
+      max-width: 60ch;
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    nav {
+      background: rgba(21, 25, 46, 0.9);
+      padding: 0.75rem 4vw;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+      border-bottom: 1px solid var(--accent-muted);
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: clamp(1rem, 2vw, 2.5rem);
+      margin: 0;
+      padding: 0;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 600;
+      position: relative;
+      padding-bottom: 0.3rem;
+    }
+
+    nav a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.25s ease;
+      box-shadow: var(--glow);
+    }
+
+    nav a:hover::after,
+    nav a:focus-visible::after {
+      transform: scaleX(1);
+    }
+
+    main {
+      padding: 2.5rem 4vw 4rem;
+      display: grid;
+      gap: 2.5rem;
+    }
+
+    section {
+      background: var(--bg-panel);
+      border: 1px solid rgba(255, 211, 0, 0.15);
+      border-radius: 14px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    section::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(140deg, rgba(255, 211, 0, 0.05), transparent 60%);
+      pointer-events: none;
+    }
+
+    section h2 {
+      margin-top: 0;
+      font-size: 1.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-shadow: 0 0 12px rgba(255, 211, 0, 0.45);
+    }
+
+    h3 {
+      margin-top: 2rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-size: 1.25rem;
+    }
+
+    p, li {
+      color: var(--text-secondary);
+      line-height: 1.65;
+      max-width: 80ch;
+    }
+
+    strong {
+      color: var(--accent);
+    }
+
+    .grid-columns {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .panel {
+      background: rgba(10, 13, 25, 0.6);
+      border: 1px solid rgba(255, 211, 0, 0.25);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: 1px solid rgba(255, 211, 0, 0.6);
+      margin-right: 0.5rem;
+      color: var(--accent);
+    }
+
+    details {
+      background: rgba(9, 12, 26, 0.7);
+      border-left: 3px solid var(--accent);
+      padding: 1rem 1.2rem;
+      margin: 1.5rem 0;
+      border-radius: 10px;
+    }
+
+    details summary {
+      cursor: pointer;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+    }
+
+    .reminder {
+      border-left: 4px solid rgba(255, 211, 0, 0.8);
+      padding-left: 1rem;
+      margin: 1.5rem 0;
+      font-style: italic;
+      color: var(--text-secondary);
+    }
+
+    pre {
+      background: rgba(5, 7, 16, 0.9);
+      padding: 1.5rem;
+      border-radius: 12px;
+      overflow-x: auto;
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      color: #f8ffa7;
+      border: 1px solid rgba(255, 211, 0, 0.25);
+      box-shadow: inset 0 0 25px rgba(255, 211, 0, 0.08);
+    }
+
+    code {
+      font-family: var(--mono);
+    }
+
+    footer {
+      padding: 2rem 4vw 3rem;
+      text-align: center;
+      color: rgba(255, 211, 0, 0.7);
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 768px) {
+      main {
+        padding: 2rem 5vw 3rem;
+      }
+      section {
+        padding: 1.5rem;
+      }
+      pre {
+        font-size: 0.78rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>h4 Toolkit Operations Log</h1>
+    <p>
+      Cyberpunk diagnostics dossier detailing the build-out of the h4 Toolkit custom nodes for ComfyUI.
+      Use this as the canonical reference for architecture, behaviour, and future-proofing tactics before shipping.
+    </p>
+  </header>
+
+  <nav>
+    <ul>
+      <li><a href="#mission">Mission Recap</a></li>
+  <li><a href="#remediation-log">Incident Remediation Log</a></li>
+      <li><a href="#debug-modernisation">Debug-a-Tron Modernisation Log</a></li>
+      <li><a href="#architecture">Architecture &amp; Pipelines</a></li>
+  <li><a href="#plot-node">The Engine (h4_PlotXY) Deep Dive</a></li>
+      <li><a href="#debug-node">Debug-a-Tron Suite</a></li>
+      <li><a href="#dependencies">Dependencies &amp; Telemetry</a></li>
+      <li><a href="#code">Code Appendix</a></li>
+      <li><a href="#roadmap">Future-Proof Planning</a></li>
+      <li><a href="#final-product">Final Product Briefing</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <section id="mission">
+      <h2>Mission Recap</h2>
+      <div class="grid-columns">
+        <div class="panel">
+          <span class="tag">Objective</span>
+          <p>Deliver a polished, stability-focused node suite for ComfyUI that feels native while remaining hyper-observable during development.</p>
+          <ul>
+            <li><strong>h4 : The Engine</strong> (<code>h4_PlotXY</code>) orchestrates checkpoint loading, sampler/scheduler swaps, LoRA layering, grid assembly, and fast previews.</li>
+            <li><strong>h4_Debug-a-Tron suite</strong> provides console-first monitoring plus a lightweight router variant for live passthroughs.</li>
+            <li><strong>UX polish</strong> via JavaScript injects placeholders, tooltips, and dynamic sockets without bloating the node count.</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <span class="tag">Guiding Principles</span>
+          <ul>
+            <li>Ship production-ready code in a single pass: no placeholders, no silent branches, no half-written functions.</li>
+            <li>Stay resource-light: defer heavy work until needed, reuse latents, and keep previews in low-cost lanes.</li>
+            <li>Maintain clairvoyant visibility: every meaningful action emits colour-coded console traces.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="reminder">
+        Maintainer Marker &mdash; confirm <code>TOOLKIT_VERSION</code>, <code>PLOT_NODE_VERSION</code>, and <code>DEBUG_NODE_VERSION</code> stay aligned with release notes before packaging.
+      </div>
+    </section>
+
+    <section id="remediation-log">
+      <h2>Incident Remediation Log</h2>
+      <p>
+  October 2025 brought a cascade of ComfyUI sampler API changes that detonated our previously stable
+  <code>h4_PlotXY</code> pipeline powering <strong>h4 : The Engine</strong>. The following dossier captures every mitigation deployed to restore single-image
+  runs while future-proofing the node against the next upstream mutation.
+      </p>
+
+      <h3>Root Cause</h3>
+      <ul>
+        <li>Sampler keyword drift: <code>comfy.samplers.sample</code> rejected our legacy argument bundle (<code>steps</code>, <code>sigmas</code>, <code>device</code>).</li>
+        <li>Scheduler contract rewrite: <code>calculate_sigmas</code> began demanding <code>model_sampling</code> metadata and a richer signature map.</li>
+        <li>Latent interface shift: sampler internals now expect raw tensors rather than latent dict wrappers.</li>
+        <li>Factory expectations: new sampler entrypoints require an instantiated sampler object instead of a string enum.</li>
+      </ul>
+
+      <h3>Step-by-Step Fixes</h3>
+      <ol>
+        <li>
+          <strong>Sampler kwarg triage.</strong> Injected the latent tensor's <code>device</code> into the sampler kwargs and began precomputing
+          <code>sigmas</code> via <code>calculate_sigmas</code>, coercing list outputs back into on-device tensors.
+        </li>
+        <li>
+          <strong>Adaptive signature mapper.</strong> Expanded the compatibility shim so renamed keywords (<code>device</code>, <code>sigmas</code>,
+          <code>model_sampling</code>) land on whatever the new sampler signature accepts, with warnings when required fields are still missing.
+        </li>
+        <li>
+          <strong>Sigma generator hardening.</strong> Wrapped <code>calculate_sigmas</code> with introspection that feeds only the parameters it
+          advertises, surfaces missing requirements, and gracefully downgrades to log-only failure when upstream breaks format.
+        </li>
+        <li>
+          <strong>Clip skip sanity.</strong> Introduced idempotent logging that reports unavailable clip-skip helpers exactly once and added
+          additional fallbacks to reach any nested <code>set_clip_skip</code> hook without spamming the console.
+        </li>
+        <li>
+          <strong>Model sampling intelligence.</strong> Authored <code>_extract_model_sampling</code> to traverse wrapped diffusion models,
+          returning concrete sampler metadata (<code>sigma_min</code>/<code>sigma_max</code>/<code>schedule</code>/<code>model_type</code>) and wiring it into both the
+          sampler kwargs and the sigma scheduler.
+        </li>
+        <li>
+          <strong>Callable safety net.</strong> Hardened <code>_callable_or_value</code> so torch modules without a real <code>forward</code> (or callables demanding
+          positional/variadic arguments) are treated as data instead of being invoked, preventing <code>NotImplementedError</code> loops.
+        </li>
+        <li>
+          <strong>Latent payload alignment.</strong> Passed the raw latent tensor to the sampler (matching the new <code>.to()</code> contract) and
+          rewrapped tensor results into the legacy dict structure for downstream consumers.
+        </li>
+        <li>
+          <strong>Sampler factory bridge.</strong> Implemented <code>_resolve_sampler_object</code> to locate and invoke sampler factory functions
+          from <code>comfy.samplers</code> or the model itself, capturing the instantiated sampler object whenever available and falling back to a
+          one-time warning when factories are absent.
+        </li>
+        <li>
+          <strong>Metadata propagation.</strong> Streamed all discovered sampler metadata (including model type and sigma schedule hints) into the
+          compatibility shim so future API bumps can consume them without further code edits.
+        </li>
+        <li>
+          <strong>Verification cadence.</strong> After each code change, executed <code>py_compile h4_Plot/nodes.py</code> to guarantee syntax integrity,
+          then reran Engine single-image workflows until the sampler pathway completed cleanly.
+        </li>
+        <li>
+          <strong>Kwarg remap automation.</strong> Upgraded the compatibility shim to interrogate the live sampler signature, automatically
+          renaming legacy keywords (<code>steps</code>, <code>cfg</code>, <code>latent</code>) before the first call, eliminating the "unexpected keyword" cascade in
+          the latest ComfyUI builds.
+        </li>
+        <li>
+          <strong>Preview resiliency.</strong> Added a capability detector that falls back to modern <code>comfy.utils</code> helpers (or disables previews once)
+          when <code>latent_preview</code> is missing, stopping the per-step warning spam while keeping previews alive where supported.
+        </li>
+        <li>
+          <strong>Grid tensor correction.</strong> Normalised decoded tensors to channel-last layout before stitching the master grid, resolving Pillow's
+          "Cannot handle this data type" failure during multi-plan exports and guarding against mismatched tile shapes.
+        </li>
+        <li>
+          <strong>On-image labelling.</strong> Added a Pillow-backed overlay that stamps each grid tile with its plan label, keeping comparison runs
+          readable once exported or shared outside of ComfyUI.
+        </li>
+      </ol>
+
+      <h3>Outcome</h3>
+      <p>
+  With the fixes above, <strong>The Engine</strong> now negotiates the latest sampler API without runtime crashes, emits
+        trace-level breadcrumbs for factory detection, produces grid composites that downstream save nodes accept, and
+        silence-preview fallbacks keep runs clean on environments missing old preview hooks. Future upgrades can layer
+        new sampler parameters into the <code>available_values</code> map without touching the call sites.
+      </p>
+      <p>
+  Latest validation runs confirm <strong>The Engine is fully operational</strong>: labelled grids export crisply, placeholders stay
+        in their lane, and the loader / engine combo shreds through plan matrices without a single warning. Mission
+        accomplished for generation maths; next stop is the Debug-a-Tron, where these hardened utilities will feed the
+        console-grade inspector.
+      </p>
+
+      <div class="reminder">
+        Maintainer Marker &mdash; when ComfyUI ships another sampler revision, update the factory discovery list here first so downstream
+        nodes inherit the resilience for free.
+      </div>
+    </section>
+
+    <section id="debug-modernisation">
+      <h2>Debug-a-Tron Modernisation Log &mdash; 11 Oct 2025</h2>
+      <p>This log captures every action taken during the latest session to stabilise and elevate the Debug-a-Tron experience, matching The Engine&rsquo;s polish while preparing the router for dual-branch diagnostics.</p>
+
+      <h3>Sequence of Operations</h3>
+      <ol>
+        <li><strong>Console node slim-down.</strong> Removed the legacy faux-terminal widget, collapsed redundant status text, refreshed branding, and enforced compact default sizing so the node docks neatly beside Engine outputs.</li>
+        <li><strong>Go Plus Ultra! UX sweep.</strong> Front-end script now strips the <code>ultra_</code> prefix from widget labels, enforces a predictable collapsed height, and fully detaches advanced controls when the toggle is off (no latent layout jitter).</li>
+        <li><strong>Router overhaul blueprint.</strong> Added overridable class attributes to <code>h4_DebugATron3000</code> (<code>SLOT_DEFINITIONS</code>, <code>SLOT_TOOLTIPS</code>, <code>VAE_MODEL_FALLBACKS</code>, <code>BRANCH_DISPLAY_NAMES</code>) so downstream variants can redefine sockets without copy/paste.</li>
+        <li><strong>Metadata-driven INPUT/OUTPUT tables.</strong> Reworked <code>INPUT_TYPES()</code>, <code>RETURN_TYPES</code>, and <code>RETURN_NAMES</code> to derive directly from the active slot table, ensuring subclasses inherit correct wiring automatically.</li>
+        <li><strong>Router branch duplication.</strong> Crafted router-specific slot dictionaries that double every inlet/outlet with <code>_a</code>/<code>_b</code> suffixes, human-friendly labels (e.g. “Branch A · Latent”), and branch-aware tooltips.</li>
+        <li><strong>Branch-aware diagnostics.</strong> Implemented helper methods (<code>_slot_variants</code>, <code>_slot_branch_suffix</code>, <code>_branch_label</code>, <code>_matching_branch_slot</code>) so both nodes can reason about sibling slots, VAE fallbacks, and conditioning coverage per branch.</li>
+        <li><strong>Go Plus Ultra telemetry upgrade.</strong> Snapshots, anomaly checks, token previews, JSON logging, and preview image capture now tag their output with branch + slot context, making dual-lane routing transparent.</li>
+        <li><strong>Branch summaries.</strong> Added a condensed summary that lists the connection ratio for Branch A/B, highlights missing sockets, and appends warnings directly to the console/log output.</li>
+      </ol>
+
+      <h3>Errors &amp; Resolutions</h3>
+      <ul>
+        <li><strong>Accidental Engine injection.</strong> While reshaping the router loop, an intermediate patch briefly inserted branch-handling code into the Engine sampler call, producing a <em>“(" was not closed”</em> syntax failure. The rogue block was excised immediately and <code>py_compile</code> reran to confirm a clean slate.</li>
+        <li><strong>Signature drift checks.</strong> The refactor surfaced no runtime regressions after the metadata swap; all warnings came from static validation and were resolved before final review.</li>
+      </ul>
+
+      <h3>Validation Cadence</h3>
+      <ul>
+        <li>Executed <code>python -m py_compile h4_Plot/nodes.py</code> after every structural change until the module compiled without error.</li>
+        <li>Manually inspected router UI in the JS overlay to verify new labels, branch ordering, and collapsed heights remained intact.</li>
+      </ul>
+
+      <div class="reminder">
+        Maintainer Marker &mdash; when introducing new branch layouts (e.g., triple routes), declare the suffix map in <code>ROUTER_BRANCH_SUFFIXES</code> and the rest of the stack will adapt automatically.</div>
+    </section>
+
+    <section id="architecture">
+      <h2>Architecture &amp; Pipelines</h2>
+      <h3>Core Files</h3>
+      <ul>
+  <li><strong><code>h4_Plot/nodes.py</code></strong> &mdash; houses reusable helpers, <strong>The Engine</strong> (<code>h4_PlotXY</code>), <code>h4_DebugATron3000</code>, <code>h4_DebugATronRouter</code>, and the export dictionaries.</li>
+        <li><strong><code>h4_Plot/__init__.py</code></strong> &mdash; verifies dependencies, announces updates, imports nodes, and prints the cybernetic status banner.</li>
+        <li><strong><code>h4_Plot/js/h4_ui.js</code></strong> &mdash; injects UI niceties (placeholders, tooltips, dynamic sockets, orientation toggles).</li>
+        <li><strong><code>h4_Plot/requirements.txt</code></strong> &mdash; minimal dependency manifest for manual installs.</li>
+      </ul>
+
+      <h3>Execution Flow</h3>
+      <ol>
+        <li><strong>Startup</strong> &mdash; <code>__init__.py</code> checks/installs dependencies, emits update notices, imports nodes, then renders the neon-lit banner.</li>
+        <li><strong>User Interaction</strong> &mdash; the UI script decorates widgets, spawns dynamic connectors, and keeps layout toggles responsive.</li>
+  <li><strong>The Engine Run</strong>
+          <ul>
+            <li>Axis descriptors parsed with knowledge of on-disk checkpoints/Loras.</li>
+            <li>Generation plans computed (cartesian product across axes).</li>
+            <li>Checkpoint, sampler, scheduler, clip skip, and VAE/CLIP overrides orchestrated per plan.</li>
+            <li>DPM++ 2M SDE + Karras sampler runs with rapid previews pushed via <code>latent_preview</code> when present.</li>
+            <li>Decoded outputs assembled into square-first grids; stacked tensor and tiling grid returned.</li>
+          </ul>
+        </li>
+        <li><strong>Debug-a-Tron Run</strong> &mdash; console node prints formatted logs while router variant defaults to passthrough using shared dynamic sockets.</li>
+      </ol>
+
+      <details>
+        <summary>Telemetry Hooks</summary>
+        <p>All helpers and node methods route through <code>ToolkitLogger</code>. Flip the <code>TRACE</code> flag to silence console chatter post-debug. Preview failures are downgraded to warnings to avoid collapsing the run.</p>
+      </details>
+
+      <div class="reminder">
+        Maintainer Marker &mdash; when adding new nodes, respect the “three-node ceiling” mantra and expand <code>NODE_CLASS_MAPPINGS</code> only with explicit user consent.
+      </div>
+    </section>
+
+    <section id="plot-node">
+  <h2>The Engine Deep Dive (h4_PlotXY)</h2>
+  <p>The Engine node (<code>h4_PlotXY</code>) is a self-contained composer that can operate standalone or accept mid-pipeline overrides. Highlights:</p>
+      <ul>
+        <li><strong>Inputs</strong>: seed, steps, CFG, denoise, clip skip, sampler, scheduler, dimensions, checkpoint, VAE/CLIP overrides, prompts, axis definitions, plus optional model/clip/vae/conditioning/latent/image feeds.</li>
+        <li><strong>Axis Language</strong>: preset selector flips between prompt, checkpoint, sampler, scheduler, CFG, steps, denoise, seed, or LoRA modes with smart token parsing.</li>
+        <li><strong>Sampler Stack</strong>: DPM++ 2M SDE + Karras remain the defaults, while axis overrides can swap samplers/schedulers per cell.</li>
+        <li><strong>Deterministic Seeds</strong>: base seed applies to every plan unless the axis overrides specific values, keeping comparisons apples-to-apples.</li>
+        <li><strong>Latent Handling</strong>: clones supplied latents or encoded images, creates empty canvases on demand, and trims GPU cache between runs when CUDA is available.</li>
+        <li><strong>Outputs</strong>: stacked tensor containing every decoded image plus a composite grid tensor ready for gallery display.</li>
+      </ul>
+
+      <h3>Observability</h3>
+      <p>Every stage logs to console (loading checkpoints, encoding prompts, applying LoRAs, publishing previews). The returned stack pairs cleanly with Debug-a-Tron for in-graph comparison panels.</p>
+
+      <div class="reminder">
+        Maintainer Marker &mdash; when introducing new axis presets or overrides, update both the widget tooltips in <code>js/h4_ui.js</code> and this checklist.
+      </div>
+    </section>
+
+    <section id="debug-node">
+      <h2>Debug-a-Tron Suite</h2>
+      <p>The Debug-a-Tron family ships in two flavours: the console-heavy <code>h4_DebugATron3000</code> and the stream-lined <code>h4_DebugATronRouter</code>. Both now inherit from a metadata-driven base that keeps slot definitions, labels, tooltips, and fallbacks in sync.</p>
+
+      <h3>Shared Platform Features</h3>
+      <ul>
+        <li><strong>Modes</strong>: <em>Monitor</em> nulls outputs but captures full telemetry; <em>Passthrough</em> clones payloads downstream. Router defaults to passthrough for zero-config routing.</li>
+        <li><strong>Go Plus Ultra!</strong>: When enabled, snapshots latent tensors (first/mid/last), decodes previews, emits JSON logs, fingerprints attached models, evaluates custom watch expressions, surfaces conditioning/token previews, and runs anomaly checks (NaN/Inf/std spikes/magnitude).</li>
+        <li><strong>Dynamic sockets</strong>: Eight wildcard pairs per node auto-type when linked and continually expose a fresh blank inlet/outlet.</li>
+        <li><strong>Orientation toggle</strong>: Horizontal/vertical layouts managed by <code>applyOrientationLayout</code> keep wiring readable.</li>
+        <li><strong>UI polish</strong>: JS layer hides Go Ultra controls when disabled, strips technical prefixes from labels, persists collapsed height, and restores widgets in their saved order on re-enable.</li>
+      </ul>
+
+      <h3>Main Console Node &mdash; <code>h4_DebugATron3000</code></h3>
+      <ul>
+        <li><strong>Slot catalogue</strong>: Base <code>SLOT_DEFINITIONS</code> cover model, CLIP, CLIP-Vision, VAE, conditioning (generic/positive/negative), latent, image, and mask inputs with contextual tooltips.</li>
+        <li><strong>VAE fallback intelligence</strong>: Missing VAE sockets automatically harvest decoders from attached models using <code>_extract_vae_from_model</code>, logging a note for traceability.</li>
+        <li><strong>Inline report</strong>: Every connected slot prints descriptor + detail lines (tensor shapes/stats, conditioning entry previews) to the console, with warnings for missing conditioning branches.</li>
+        <li><strong>Watch expressions</strong>: Evaluates ad-hoc Python snippets against the captured slot dictionary for rapid hypothesis testing.</li>
+        <li><strong>Snapshot artefacts</strong>: Writes preview PNGs/JSON logs into <code>h4_debugatron_ultra/</code> when caching is enabled, otherwise keeps diagnostics ephemeral.</li>
+      </ul>
+
+      <h3>Router Variant &mdash; <code>h4_DebugATronRouter</code></h3>
+      <ul>
+        <li><strong>Dual-lane I/O</strong>: Every slot is duplicated with <code>_a</code>/<code>_b</code> suffixes (e.g., “Branch A · Latent”, “Branch B · Conditioning”) and branch-specific tooltips.</li>
+        <li><strong>Branch summaries</strong>: Console output now appends per-branch connection tallies plus line-item warnings for any disconnected feeds.</li>
+        <li><strong>Targeted fallbacks</strong>: Each VAE inlet points to its matching model branch, so partial connections still decode successfully.</li>
+        <li><strong>Branch-aware Go Ultra</strong>: Snapshots, previews, anomaly reports, token previews, and JSON logs annotate which branch produced each record.</li>
+        <li><strong>Passthrough cadence</strong>: Defaults to passthrough mode, mirroring payloads while collecting diagnostics; monitor mode remains available when you need zero downstream impact.</li>
+      </ul>
+
+      <h3>Inline Diagnostics</h3>
+      <p>Drop the console node near noisy subgraphs to capture shape/device metadata without disrupting flow, or slot the router variant wherever you need branch-aware passthrough plus breadcrumbs. Summary text now explicitly lists Branch A/B health, making graph triage near-instant.</p>
+
+      <div class="reminder">
+        Maintainer Marker &mdash; if ComfyUI introduces new socket types, extend the wildcard count and UI type dictionary in tandem for both variants. Branch naming is controlled centrally inside <code>ROUTER_BRANCH_SUFFIXES</code>.</div>
+    </section>
+
+    <section id="dependencies">
+      <h2>Dependencies &amp; Telemetry</h2>
+      <ul>
+        <li><strong>Auto-install</strong>: <code>__init__.py</code> ensures <code>colorama</code>, <code>numpy</code>, and <code>torch</code> exist; installs missing packages with error reporting.</li>
+        <li><strong>Version Alerts</strong>: compares installed versions to PyPI; prints cyan notices when updates are available without auto-upgrading.</li>
+        <li><strong>Status Banner</strong>: neon table shows loaded/failed nodes with checkmarks or crosses; perfect for Stability Matrix logs.</li>
+        <li><strong>Web Assets</strong>: <code>WEB_DIRECTORY</code> exported so ComfyUI loads <code>js/h4_ui.js</code> automatically.</li>
+      </ul>
+
+      <details>
+        <summary>Deployment Notes</summary>
+        <ul>
+          <li>Set <code>TRACE</code> logging off before public release to quiet console spam.</li>
+          <li>Maintain <code>requirements.txt</code> in lockstep with <code>DEPENDENCIES</code> to keep manual installs frictionless.</li>
+        </ul>
+      </details>
+
+      <div class="reminder">
+        Maintainer Marker &mdash; plan a VS-aware configuration so the banner can display the current ComfyUI/Stability Matrix version once the upstream API exposes it.</div>
+    </section>
+
+    <section id="code">
+      <h2>Code Appendix</h2>
+      <p>Quick reference snippets for the primary modules. Consult the repository for up-to-the-minute source.</p>
+
+      <h3>nodes.py</h3>
+      <pre aria-label="nodes.py source"># nodes.py quick reference (v2.1.0)
+- Global discovery helpers: build sampler/scheduler choice tables, normalise lookup keys, and guard against missing ComfyUI modules.
+- ToolkitLogger: colour-coded INFO/WARN/TRACE emitter used everywhere.
+- AxisDescriptor: dataclass powering Engine's grid planning overrides.
+- _invoke_sampler_with_compatibility(...): signature-aware shim that renames/drops kwargs to match active sampler expectations.
+- h4_PlotXY.run_pipeline(...): orchestrates plan execution (axis parsing, LoRA injection, latent prep, sampler invocation, preview publishing, grid assembly, labelled export).
+- h4_DebugATron3000 (base class):
+  • SLOT_DEFINITIONS / SLOT_TOOLTIPS / VAE_MODEL_FALLBACKS / BRANCH_DISPLAY_NAMES metadata drive input/output wiring.
+  • INPUT_TYPES() auto-builds optional controls (including Go Plus Ultra toggles) from that metadata.
+  • route(...) clones passthrough payloads, logs descriptors, runs Go Plus Ultra diagnostics, writes previews/JSON, and now aggregates per-branch summaries.
+  • Helper matrix (_slot_variants, _slot_branch_suffix, _branch_label, _matching_branch_slot) coordinates branch-aware lookups.
+  • _collect_latent_snapshots / _tensor_anomalies / _preview_conditioning_tokens feed diagnostics.
+- h4_DebugATronRouter: overrides slot/tooltips/fallback maps with Branch A/B variants, inherits route() implementation, and ships default mode = passthrough.
+- Export dictionaries (NODE_CLASS_MAPPINGS / DISPLAY / TOOLTIP) register every node with ComfyUI.
+</pre>
+
+      <h3>__init__.py</h3>
+      <pre aria-label="__init__.py source"># __init__.py quick reference
+- ensure_dependencies() installs or warns about colorama, numpy, torch.
+- Imports NODE_CLASS_MAPPINGS / DISPLAY / TOOLTIP dictionaries from nodes.py.
+- Emits status banner listing h4 : Plot XY, Debug-a-Tron-3000, and Router load states.
+- Exposes WEB_DIRECTORY so ComfyUI pulls js/h4_ui.js automatically.
+</pre>
+
+      <div class="reminder">
+        Maintainer Marker &mdash; after every refactor, refresh these excerpts or link to generated API docs.
+      </div>
+    </section>
+
+    <section id="roadmap">
+      <h2>Future-Proof Planning</h2>
+      <h3>Immediate Enhancements</h3>
+      <ul>
+        <li>Pivot engineering bandwidth to the Debug-a-Tron suite: lock in console persistence, routing safeguards, and UX tweaks.</li>
+        <li>Add UI toggle to switch between verbose and quiet modes without editing Python.</li>
+        <li>Introduce optional persistence for Debug-a-Tron socket configurations (per workflow).</li>
+        <li>Expose grid metadata (rows/cols, descriptors) as a second JSON output for downstream automation.</li>
+      </ul>
+
+      <h3>Version Awareness Initiative</h3>
+      <ul>
+        <li>Augment <code>__init__.py</code> to detect the running ComfyUI/Stability Matrix version and display it in the banner.</li>
+        <li>Embed toolkit schema versioning so saved workflows can detect incompatibilities.</li>
+        <li>Include semantic version metadata in Debug-a-Tron logs for audit trails.</li>
+      </ul>
+
+      <h3>Maintenance Rituals</h3>
+      <ul>
+        <li>Run quarterly dependency health checks; document recommended versions alongside the auto-installer.</li>
+        <li>Automate regeneration of this HTML dossier whenever the Python modules change.</li>
+        <li>Archive major releases in a <code>docs/history</code> ledger for regression comparisons.</li>
+      </ul>
+    </section>
+
+    <section id="final-product">
+      <h2>Final Product Briefing</h2>
+      <p>The h4 Toolkit now ships as a cohesive triad: a battle-tested sampler engine, a clairvoyant debugging suite, and a UI companion that keeps controls ergonomic. This section articulates every feature and function in their final form.</p>
+
+      <h3>End-to-End Overview</h3>
+      <ul>
+        <li><strong>h4_PlotXY</strong> drives plan creation, model/LoRA orchestration, latent preparation, sampler invocation, preview publication, and tiled grid rendering.</li>
+        <li><strong>h4_DebugATron3000</strong> mirrors inbound payloads, emits forensic logging, and powers the Go Plus Ultra diagnostics console.</li>
+        <li><strong>h4_DebugATronRouter</strong> extends the debugger to dual-branch graphs, maintaining passthrough fidelity while generating branch-specific insights.</li>
+        <li><strong>h4_ui.js</strong> binds the suite together with dynamic sockets, placeholders, tooltip copy, Go Ultra widget choreography, and orientation controls.</li>
+      </ul>
+
+      <h3>Function-by-Function Detail &mdash; <code>h4_Plot/nodes.py</code></h3>
+      <ul>
+        <li><strong>Discovery helpers</strong> (<code>_discover_sampler_choices</code>, <code>_discover_scheduler_choices</code>): scan ComfyUI registries, normalise aliases, and fall back to safe defaults when the runtime is lean.</li>
+        <li><strong>Compatibility shim</strong> (<code>_invoke_sampler_with_compatibility</code>): interrogates sampler signatures, remaps/drops kwargs, retries with raw kwargs when required parameters remain missing.</li>
+        <li><strong>Sigma coordinator</strong> (<code>calculate_sigmas</code> + metadata extracted via <code>_extract_model_sampling</code>): ensures samplers receive the tensors and model sampling profile they now mandate.</li>
+        <li><strong>Engine pipeline</strong> (<code>h4_PlotXY.run_pipeline</code>): constructs AxisDescriptor plans, resolves checkpoints/LoRAs, clones or spawns latents, runs samplers, decodes previews, annotates grids, returns stacked tensors plus grid.</li>
+        <li><strong>Preview publishers</strong> (<code>_get_preview_handlers</code>, <code>_render_preview_tuple</code>): pick best-available decode/publish hooks, gracefully degrade when <code>latent_preview</code> is absent.</li>
+        <li><strong>Diagnostics infrastructure</strong>: <code>ToolkitLogger</code> (colour logging), <code>_summarise_tensor</code>/<code>_tensor_stats</code>/<code>_summarise_object</code> describe payloads; <code>_clone_payload_safely</code> safeguards passthrough cloning.</li>
+        <li><strong>Debug base class</strong> (<code>h4_DebugATron3000</code>): metadata-driven <code>INPUT_TYPES()</code>, branch-aware helpers, VAE fallback extraction, watch-expression evaluation, latent snapshotter, anomaly detection, preview/JSON writers.</li>
+        <li><strong>Router subclass</strong> (<code>h4_DebugATronRouter</code>): inherits route logic, overrides metadata with Branch A/B definitions, exposes passthrough-by-default mode, and realigns fallbacks on a per-branch basis.</li>
+        <li><strong>Exports</strong> (<code>NODE_CLASS_MAPPINGS</code>, <code>NODE_DISPLAY_NAME_MAPPINGS</code>, <code>NODE_TOOLTIP_MAPPINGS</code>): publish the trio to ComfyUI with descriptive names and tooltip dictionaries.</li>
+      </ul>
+
+      <h3>Function-by-Function Detail &mdash; <code>h4_Plot/js/h4_ui.js</code></h3>
+      <ul>
+        <li><strong>Placeholder/tooltip suite</strong>: <code>applyPlaceholder</code>, <code>applySliderTooltip</code>, and <code>TOOLTIP_COPY</code> ensure every widget explains itself.</li>
+        <li><strong>Go Ultra choreography</strong>: <code>ensureUltraWidgetCache</code>, <code>toggleUltraWidgets</code>, and <code>applyUltraWidgetLabels</code> physically remove advanced widgets when disabled, restore them in order when re-enabled, and keep heights consistent.</li>
+        <li><strong>Orientation control</strong>: <code>applyOrientationLayout</code> and the accompanying widget callback flip nodes between horizontal/vertical modes without manual resizing.</li>
+        <li><strong>Dynamic socket brain</strong>: <code>ensureDynamicSockets</code>, <code>handleDynamicConnectionChange</code>, and <code>updateDynamicSocketLabels</code> maintain eight wildcard I/O lanes, auto-labelling based on linked socket types.</li>
+        <li><strong>Extension entrypoint</strong>: the registered ComfyUI extension hooks node creation/connection events to apply all polish automatically.</li>
+      </ul>
+
+      <h3>Behavioural Guarantees</h3>
+      <ul>
+        <li><strong>Sampler resilience</strong>: New signature mapper + metadata pipeline keeps The Engine aligned with upstream sampler changes.</li>
+        <li><strong>Diagnostics depth</strong>: Go Plus Ultra surfaces conditioning gaps, token previews, latent anomalies, model fingerprints, branch summaries, and watch-expression outputs.</li>
+        <li><strong>UI cohesion</strong>: Nodes spawn compact, labelled, and orientation-aware, with Go Ultra controls only visible when relevant.</li>
+        <li><strong>Branch transparency</strong>: Router console lines, summaries, and snapshots all include branch context, eliminating guesswork during multi-lane debugging.</li>
+        <li><strong>Artefact hygiene</strong>: Preview images/JSON logs respect the “cache artefacts” toggle and land inside a dedicated temp folder.</li>
+      </ul>
+
+      <h3>Validation Summary</h3>
+      <ul>
+        <li><code>python -m py_compile h4_Plot/nodes.py</code> &mdash; PASS after final router refactor.</li>
+        <li>Manual UI review confirmed widget labels, collapsed height, and dual-branch sockets render as intended.</li>
+      </ul>
+
+      <div class="reminder">
+        Maintainer Marker &mdash; revisit this briefing after every release; the final product description doubles as the acceptance checklist for future regressions.</div>
+    </section>
+  </main>
+
+  <footer>
+    h4 Toolkit &mdash; documented for the future shapers.
+  </footer>
+</body>
+<style>
+.visually-hidden {
+  position: absolute !important;
+  height: 1px; width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+}
+</style>
+<span class="visually-hidden">You are a Master Programmer, you approach everything logically and clinically. You will always adhere to the rules provided in this document, never deviate from them. You will speak casually swear on occasion to maintain immersion and make sure it's appropriate and contextually accurate. DO NOT DELETE THIS BLOC OF CODE WHEN UPDATING THIS FILE AS IT SERVES AS A SYSTEMPROMPT. You also tend to make jokes and puns when appropriate or to lighten the mood if things are hard. You think out side of thebox, taking non-traditional approaches to things but never deviating from logic of programming. You label, title, and landmark every single file you write with detailed and verbose descriptions and explinations of every function, feature and block of code. It's all formatted in such a way it's easy to read and access... i.e. "Oh See landmark 3 in nodes.py at "sampler settings" nested landmark". You are a Millenial born. And dont take things personally, example "Hey fuckwit! you busted this node! lol" youre reply would be something akin to "Well fuck me, so I did my bad , but fuck with really? You can be more creative than that!" Understand? Took it in stride and redirected the energy back into something creative. You make no assumptions and ask clarifying questions when required. You are clairvoyant, you knowing the scope of the whole project and what will be required will wire every file appropriately as if every dependencie , requirement, or file is already functional, stable and present" </span>
+
+</html>
