@@ -1,6 +1,6 @@
 # h4 Toolkit — Comprehensive Operations Manual
 
-> Hyper-observable, cyberpunk-themed quality-of-life boosts for ComfyUI. This README is the definitive companion for installing, running, and mastering the **h4 Toolkit** nodes. Every control, feature, and internal safeguard is documented below.
+> Hyper-observable, quality-of-life boosts for ComfyUI. This README is the definitive companion for installing, running, and mastering the **h4 Toolkit** nodes. Every control, feature, and internal safeguard is documented below.
 
 ---
 
@@ -935,4 +935,5 @@ If issues persist, gather console logs (the toolkit prints namespace-prefixed en
 | `h4_Plot/nodes.py` | `h4_PlotXY`, `h4_DebugATron3000`, `h4_DebugATronRouter`, `_invoke_sampler_with_compatibility`, `_collect_latent_snapshots`, `_tensor_anomalies`, etc. | Core logic for sampling, diagnostics, and metadata-driven routing. |
 | `h4_Plot/js/h4_ui.js` | `toggleUltraWidgets`, `ensureDynamicSockets`, `applyOrientationLayout`, extension registration | UI/UX companion for nodes. |
 | `h4_Plot/__init__.py` | `ensure_dependencies`, status banner, node exports | Dependency bootstrap and ComfyUI integration. |
+
 | `h4_Plot/docs/h4_toolkit_brief.html` | HTML dossier | Narrative architecture and remediation history. |
