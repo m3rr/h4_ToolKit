@@ -19,7 +19,7 @@ import urllib.error
 import urllib.request
 from dataclasses import dataclass
 from importlib import metadata
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 try:
     from colorama import Fore, Style, init as colorama_init
@@ -129,6 +129,24 @@ STATUS_COLOURS = {
 }
 
 
+def _split_display_entry(display_value: str) -> Tuple[str, str]:
+    """Derive human-friendly name and version from a display string."""
+
+    name = display_value.strip()
+    version = ""
+    if " (v" in display_value and display_value.strip().endswith(")"):
+        base, suffix = display_value.rsplit(" (v", 1)
+        name = base.strip()
+        version = suffix[:-1].strip()
+    elif " v" in display_value:
+        base, suffix = display_value.rsplit(" v", 1)
+        name = base.strip()
+        version = suffix.strip()
+    if not version:
+        version = TOOLKIT_VERSION
+    return name, version
+
+
 def _render_status_table(status_rows: List[NodeStatus]) -> None:
     def _measure(getter) -> int:
         return max((len(getter(row)) for row in status_rows), default=0)
@@ -164,36 +182,35 @@ def _render_status_table(status_rows: List[NodeStatus]) -> None:
 ensure_dependencies()
 
 status_log: List[NodeStatus] = []
+_exported_class_names: List[str] = []
 
 try:
-    from .nodes import (  # noqa: F401
-        DEBUG_NODE_VERSION,
-        NODE_CLASS_MAPPINGS,
-        NODE_DISPLAY_NAME_MAPPINGS,
-        NODE_TOOLTIP_MAPPINGS,
-        PLOT_NODE_VERSION,
-        h4_DebugATron3000,
-        h4_DebugATronRouter,
-        h4_PlotXY,
-    )
+    from . import nodes as _nodes  # noqa: F401
+
+    NODE_CLASS_MAPPINGS = _nodes.NODE_CLASS_MAPPINGS  # noqa: F401
+    NODE_DISPLAY_NAME_MAPPINGS = _nodes.NODE_DISPLAY_NAME_MAPPINGS  # noqa: F401
+    NODE_TOOLTIP_MAPPINGS = _nodes.NODE_TOOLTIP_MAPPINGS  # noqa: F401
+
     ok_colour, ok_symbol = STATUS_COLOURS["ok"]
-    status_log.append(NodeStatus("h4 : The Engine (Simple Sampler+Plot)", PLOT_NODE_VERSION, "Loaded", ok_colour, ok_symbol))
-    status_log.append(NodeStatus("h4 : Debug-a-Tron-3000", DEBUG_NODE_VERSION, "Loaded", ok_colour, ok_symbol))
-    status_log.append(NodeStatus("h4 : Debug-a-Tron-3000 Router", DEBUG_NODE_VERSION, "Loaded", ok_colour, ok_symbol))
+
+    for class_key, class_obj in NODE_CLASS_MAPPINGS.items():
+        display_name = NODE_DISPLAY_NAME_MAPPINGS.get(class_key, class_obj.__name__)
+        name, version = _split_display_entry(display_name)
+        status_log.append(NodeStatus(name, version, "Loaded", ok_colour, ok_symbol))
+        globals()[class_obj.__name__] = class_obj
+        _exported_class_names.append(class_obj.__name__)
 except Exception as exc:  # pragma: no cover - import failures should not kill startup
     err_colour, err_symbol = STATUS_COLOURS["error"]
     status_log.append(NodeStatus("h4 : The Engine (Simple Sampler+Plot)", "-", f"Failed: {exc}", err_colour, err_symbol))
     NODE_CLASS_MAPPINGS = {}
     NODE_DISPLAY_NAME_MAPPINGS = {}
+    NODE_TOOLTIP_MAPPINGS = {}
 
 _render_status_table(status_log)
 
 WEB_DIRECTORY = "js"
 
-__all__ = [
-    "h4_PlotXY",
-    "h4_DebugATron3000",
-    "h4_DebugATronRouter",
+__all__ = _exported_class_names + [
     "NODE_CLASS_MAPPINGS",
     "NODE_DISPLAY_NAME_MAPPINGS",
     "NODE_TOOLTIP_MAPPINGS",

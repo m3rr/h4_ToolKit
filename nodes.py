@@ -19,10 +19,13 @@ import inspect
 import json
 import math
 import os
+import re
 import textwrap
 import time
 from dataclasses import dataclass, field
 import copy
+import html
+import secrets
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 import hashlib
 from datetime import datetime
@@ -65,6 +68,52 @@ except Exception:  # pragma: no cover - execution context disabled
 TOOLKIT_VERSION = "1.3.0"
 PLOT_NODE_VERSION = "1.3.0"
 DEBUG_NODE_VERSION = "2.1.0"
+AXIS_DRIVER_VERSION = "0.6.0"
+UTILITY_NODE_VERSION = "1.0.0"
+
+AXIS_DRIVER_MAX_ITEMS = 8
+AXIS_DRIVER_SLOT_ORDER: Tuple[str, ...] = ("X", "Y", "Z")
+AXIS_DRIVER_SUPPORTED_PRESETS: Tuple[str, ...] = (
+    "none",
+    "prompt",
+    "checkpoint",
+    "lora",
+    "sampler",
+    "scheduler",
+    "steps",
+    "cfg",
+    "denoise",
+    "seed",
+)
+
+AXIS_DRIVER_PRESET_DEFAULTS: Dict[str, str] = {
+    "X": "checkpoint",
+    "Y": "prompt",
+    "Z": "none",
+}
+
+AXIS_DRIVER_DEFAULT_STYLE: Dict[str, Any] = {
+    "font_size": 22,
+    "font_family": "DejaVuSans",
+    "font_colour": "#FFFFFF",
+    "background": "black60",
+    "alignment": "center",
+    "label_position": "top_left",
+    "label_layout": "overlay",
+    "custom_label_x": "X",
+    "custom_label_y": "Y",
+    "custom_label_z": "Z",
+    "show_axis_headers": True,
+}
+
+AXIS_DRIVER_DEFAULT_STATE: Dict[str, Any] = {
+    "axes": [
+        {"slot": "X", "preset": "checkpoint", "items": []},
+        {"slot": "Y", "preset": "prompt", "items": []},
+        {"slot": "Z", "preset": "none", "items": []},
+    ],
+    "style": AXIS_DRIVER_DEFAULT_STYLE,
+}
 
 
 TRACE_ENABLED = os.getenv("H4_TOOLKIT_TRACE", "0") not in {"0", "false", "False", ""}
@@ -293,9 +342,65 @@ PLOT_WIDGET_TOOLTIPS = {
 }
 
 
+
+AXIS_DRIVER_WIDGET_TOOLTIPS = {
+    "config": "JSON configuration for the Axis Driver UI. Connect the outputs to nodes expecting axis payloads.",
+}
+
+
 DEBUG_WIDGET_TOOLTIPS = {
     "mode": "Monitor keeps signals internal. Passthrough relays inputs to outputs while logging.",
     "go_ultra": "Ask the router to GO PLUS ULTRA?! and unlock a diagnostics panel packed with snapshots, previews, JSON logs, and anomaly detectors.",
+}
+
+CONSOLE_COLOR_SCHEMES: Dict[str, Dict[str, str]] = {
+    "dark": {
+        "background": "#0b0c10",
+        "panel": "#1f2833",
+        "text": "#c5c6c7",
+        "accent": "#66fcf1",
+        "muted": "#45a29e",
+    },
+    "light": {
+        "background": "#f7f7f7",
+        "panel": "#ffffff",
+        "text": "#1f2933",
+        "accent": "#2563eb",
+        "muted": "#4b5563",
+    },
+    "matrix": {
+        "background": "#050805",
+        "panel": "#0f2010",
+        "text": "#9aff9a",
+        "accent": "#39ff14",
+        "muted": "#2f7044",
+    },
+    "cyberpunk": {
+        "background": "#120022",
+        "panel": "#1e0140",
+        "text": "#f6f4ff",
+        "accent": "#f72585",
+        "muted": "#7209b7",
+    },
+}
+
+CONSOLE_VERBOSITY_LEVELS: Dict[str, int] = {
+    "minimal": 0,
+    "normal": 2,
+    "verbose": 8,
+    "trace": -1,
+}
+
+EXECUTION_LOGGER_WIDGET_TOOLTIPS: Dict[str, str] = {
+    "log_level": "Select the console severity used for emitted messages.",
+    "prefix": "Human-readable tag prepended to every log entry.",
+    "show_types": "Include Python type names for each connected payload.",
+    "show_shapes": "Append tensor shapes and conditioning lengths when available.",
+}
+
+SEED_BROADCASTER_WIDGET_TOOLTIPS: Dict[str, str] = {
+    "seed": "Base seed value broadcast to every output in fixed mode.",
+    "mode": "Fixed keeps the provided seed. Random produces a new seed per execution.",
 }
 
 ULTRA_CONTROL_DEFINITIONS: Tuple[Dict[str, Any], ...] = (
@@ -472,6 +577,9 @@ class ToolkitLogger:
         if TRACE_ENABLED:
             self._emit("TRACE", Style.DIM, message)
 
+    def debug(self, message: str) -> None:
+        self._emit("DEBUG", Style.NORMAL, message)
+
     def info(self, message: str) -> None:
         self._emit("INFO", Style.BRIGHT, message)
 
@@ -530,6 +638,408 @@ class GenerationPlan:
         }
 
 
+def _axis_driver_default_state() -> Dict[str, Any]:
+    return copy.deepcopy(AXIS_DRIVER_DEFAULT_STATE)
+
+
+def _axis_driver_normalise_style(raw: Any) -> Dict[str, Any]:
+    style = copy.deepcopy(AXIS_DRIVER_DEFAULT_STYLE)
+    if isinstance(raw, dict):
+        for key, value in raw.items():
+            if key in style:
+                style[key] = value
+    return style
+
+
+def _axis_driver_normalise_item(preset: str, raw: Any) -> Dict[str, Any]:
+    payload = raw if isinstance(raw, dict) else {}
+    label = str(payload.get("label") or payload.get("source_label") or "").strip()
+    value = payload.get("value")
+    if value is None and "raw_value" in payload:
+        value = payload.get("raw_value")
+    overrides = payload.get("overrides")
+    overrides = overrides if isinstance(overrides, dict) else {}
+    strength_raw = payload.get("strength")
+    strength: Optional[float]
+    if preset == "lora":
+        try:
+            strength = float(strength_raw)
+        except (TypeError, ValueError):
+            strength = 0.75
+    else:
+        strength = None
+    return {
+        "label": label,
+        "value": value,
+        "strength": strength,
+        "overrides": copy.deepcopy(overrides),
+    }
+
+
+def _axis_driver_normalise_axis(slot: str, raw: Any) -> Dict[str, Any]:
+    preset_default = AXIS_DRIVER_PRESET_DEFAULTS.get(slot, "none")
+    payload = raw if isinstance(raw, dict) else {}
+    preset_raw = str(payload.get("preset") or preset_default).lower()
+    preset = preset_raw if preset_raw in AXIS_DRIVER_SUPPORTED_PRESETS else preset_default
+    items_raw = payload.get("items") if isinstance(payload, dict) else None
+    items: List[Dict[str, Any]] = []
+    if isinstance(items_raw, list):
+        for entry in items_raw[:AXIS_DRIVER_MAX_ITEMS]:
+            items.append(_axis_driver_normalise_item(preset, entry))
+    return {"slot": slot, "preset": preset, "items": items}
+
+
+def _axis_driver_normalise_state(raw: Any) -> Dict[str, Any]:
+    state = _axis_driver_default_state()
+    if not isinstance(raw, dict):
+        return state
+
+    state["style"] = _axis_driver_normalise_style(raw.get("style"))
+    slot_lookup = {axis["slot"]: axis for axis in state["axes"]}
+    axes_raw = raw.get("axes")
+    if isinstance(axes_raw, list):
+        for entry in axes_raw:
+            slot = str(entry.get("slot") if isinstance(entry, dict) else "").upper()
+            if slot in slot_lookup:
+                slot_lookup[slot].update(_axis_driver_normalise_axis(slot, entry))
+    # Ensure order and fallback defaults are preserved
+    ordered_axes: List[Dict[str, Any]] = []
+    for slot in AXIS_DRIVER_SLOT_ORDER:
+        base_axis = slot_lookup.get(slot, _axis_driver_normalise_axis(slot, {}))
+        if base_axis.get("preset") not in AXIS_DRIVER_SUPPORTED_PRESETS:
+            base_axis["preset"] = AXIS_DRIVER_PRESET_DEFAULTS.get(slot, "none")
+        if not isinstance(base_axis.get("items"), list):
+            base_axis["items"] = []
+        base_axis["items"] = base_axis["items"][:AXIS_DRIVER_MAX_ITEMS]
+        ordered_axes.append(base_axis)
+    state["axes"] = ordered_axes
+    return state
+
+
+def _axis_driver_slot_payload(state: Dict[str, Any], slot: str) -> Dict[str, Any]:
+    axes = state.get("axes") if isinstance(state, dict) else None
+    axis: Optional[Dict[str, Any]] = None
+    if isinstance(axes, list):
+        for entry in axes:
+            if isinstance(entry, dict) and entry.get("slot") == slot:
+                axis = entry
+                break
+    if axis is None:
+        axis = _axis_driver_normalise_axis(slot, {})
+    payload_items: List[Dict[str, Any]] = []
+    for item in axis.get("items", []):
+        if not isinstance(item, dict):
+            continue
+        payload_items.append(
+            {
+                "label": str(item.get("label") or ""),
+                "value": item.get("value"),
+                "strength": item.get("strength"),
+                "overrides": copy.deepcopy(item.get("overrides") if isinstance(item.get("overrides"), dict) else {}),
+            }
+        )
+    return {
+        "slot": slot,
+        "preset": axis.get("preset", "none"),
+        "items": payload_items,
+        "style": copy.deepcopy(state.get("style", {})),
+    }
+
+
+def _axis_driver_legacy_summary(state: Dict[str, Any]) -> str:
+    lines: List[str] = []
+    axes = state.get("axes") if isinstance(state, dict) else []
+    for axis in axes:
+        if not isinstance(axis, dict):
+            continue
+        slot = axis.get("slot", "?")
+        preset = axis.get("preset", "none")
+        header = f"Axis {slot} ({preset})"
+        items = axis.get("items") if isinstance(axis.get("items"), list) else []
+        if not items or preset == "none":
+            lines.append(f"{header}: <disabled>")
+            continue
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+            label = item.get("label") or item.get("value") or ""
+            strength = item.get("strength")
+            if preset == "lora" and strength is not None:
+                lines.append(f"{header}: {label} @ {strength}")
+            else:
+                lines.append(f"{header}: {label}")
+    style = state.get("style") if isinstance(state, dict) else None
+    if isinstance(style, dict):
+        layout = style.get("label_layout", "overlay")
+        lines.append(f"Style: layout={layout}, font={style.get('font_family', 'default')} size={style.get('font_size', 22)}")
+    return "\n".join(lines)
+
+
+def _axis_driver_parse_config(config_text: str) -> Dict[str, Any]:
+    if not isinstance(config_text, str) or not config_text.strip():
+        return _axis_driver_default_state()
+    try:
+        raw = json.loads(config_text)
+    except Exception:
+        GLOBAL_LOGGER.warn("Axis Driver config parse failed; reverting to defaults")
+        return _axis_driver_default_state()
+    return _axis_driver_normalise_state(raw)
+
+
+def _axis_driver_payload_to_descriptors(
+    payload: Optional[Dict[str, Any]],
+) -> Tuple[List[AxisDescriptor], Optional[Dict[str, Any]]]:
+    if not isinstance(payload, dict):
+        return [], None
+
+    preset = str(payload.get("preset") or "none").lower()
+    items = payload.get("items") if isinstance(payload.get("items"), list) else []
+    style = payload.get("style") if isinstance(payload.get("style"), dict) else None
+
+    if preset not in AXIS_DRIVER_SUPPORTED_PRESETS or not items:
+        return [], style
+
+    descriptors: List[AxisDescriptor] = []
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        label = str(item.get("label") or item.get("value") or "").strip()
+        overrides_raw = item.get("overrides") if isinstance(item.get("overrides"), dict) else {}
+        overrides = copy.deepcopy(overrides_raw)
+        value = item.get("value")
+
+        if preset == "prompt":
+            text_value = "" if value is None else str(value)
+            descriptors.append(
+                AxisDescriptor(
+                    source_label=label or text_value or "prompt",
+                    prompt_suffix=text_value,
+                    overrides=overrides,
+                )
+            )
+        elif preset == "checkpoint":
+            candidate = str(value or "")
+            resolved = resolve_checkpoint_name(candidate) or candidate
+            if not resolved:
+                continue
+            descriptors.append(
+                AxisDescriptor(
+                    source_label=label or resolved,
+                    checkpoint=resolved,
+                    overrides=overrides,
+                )
+            )
+        elif preset == "lora":
+            candidate = str(value or "")
+            resolved = resolve_lora_name(candidate) or candidate
+            try:
+                strength = float(item.get("strength", 0.75))
+            except (TypeError, ValueError):
+                strength = 0.75
+            descriptors.append(
+                AxisDescriptor(
+                    source_label=label or resolved,
+                    loras=[(resolved, strength)],
+                    overrides=overrides,
+                )
+            )
+        elif preset == "sampler":
+            if not value:
+                continue
+            sampler_name = str(value)
+            lookup = SAMPLER_LOOKUP.get(sampler_name.lower())
+            if lookup is None:
+                GLOBAL_LOGGER.warn(f"Axis Driver sampler '{sampler_name}' not recognised; skipping entry")
+                continue
+            overrides.setdefault("sampler", lookup)
+            descriptors.append(
+                AxisDescriptor(
+                    source_label=label or sampler_name,
+                    overrides=overrides,
+                )
+            )
+        elif preset == "scheduler":
+            if not value:
+                continue
+            scheduler_name = str(value)
+            lookup = SCHEDULER_LOOKUP.get(scheduler_name.lower())
+            if lookup is None:
+                GLOBAL_LOGGER.warn(f"Axis Driver scheduler '{scheduler_name}' not recognised; skipping entry")
+                continue
+            overrides.setdefault("scheduler", lookup)
+            descriptors.append(
+                AxisDescriptor(
+                    source_label=label or scheduler_name,
+                    overrides=overrides,
+                )
+            )
+        elif preset == "steps":
+            try:
+                steps_value = max(1, int(value))
+            except (TypeError, ValueError):
+                GLOBAL_LOGGER.warn(f"Axis Driver steps value '{value}' invalid; skipping entry")
+                continue
+            overrides.setdefault("steps", steps_value)
+            descriptors.append(
+                AxisDescriptor(
+                    source_label=label or str(steps_value),
+                    overrides=overrides,
+                )
+            )
+        elif preset == "cfg":
+            try:
+                cfg_value = float(value)
+            except (TypeError, ValueError):
+                GLOBAL_LOGGER.warn(f"Axis Driver CFG value '{value}' invalid; skipping entry")
+                continue
+            overrides.setdefault("cfg", round(cfg_value, 3))
+            descriptors.append(
+                AxisDescriptor(
+                    source_label=label or str(cfg_value),
+                    overrides=overrides,
+                )
+            )
+        elif preset == "denoise":
+            try:
+                denoise_value = float(value)
+            except (TypeError, ValueError):
+                GLOBAL_LOGGER.warn(f"Axis Driver denoise value '{value}' invalid; skipping entry")
+                continue
+            overrides.setdefault("denoise", max(0.0, min(1.0, round(denoise_value, 3))))
+            descriptors.append(
+                AxisDescriptor(
+                    source_label=label or str(denoise_value),
+                    overrides=overrides,
+                )
+            )
+        elif preset == "seed":
+            try:
+                seed_value = int(value)
+            except (TypeError, ValueError):
+                GLOBAL_LOGGER.warn(f"Axis Driver seed value '{value}' invalid; skipping entry")
+                continue
+            overrides.setdefault("seed", seed_value)
+            descriptors.append(
+                AxisDescriptor(
+                    source_label=label or str(seed_value),
+                    overrides=overrides,
+                )
+            )
+
+    return descriptors, style
+
+
+class h4_AxisDriver:
+    """Companion node that serialises structured axis presets for The Engine."""
+
+    @classmethod
+    def INPUT_TYPES(cls) -> Dict[str, Any]:  # noqa: N802
+        default_config = json.dumps(AXIS_DRIVER_DEFAULT_STATE, indent=2)
+        return {
+            "required": {
+                "config": (
+                    "STRING",
+                    {
+                        "default": default_config,
+                        "multiline": True,
+                        "tooltip": AXIS_DRIVER_WIDGET_TOOLTIPS.get("config"),
+                    },
+                )
+            }
+        }
+
+    RETURN_TYPES = ("STRING", "STRING", "STRING", "STRING")
+    RETURN_NAMES = ("axis_x", "axis_y", "axis_z", "legacy_summary")
+    FUNCTION = "emit"
+    CATEGORY = "h4 Toolkit/Generation"
+
+    def __init__(self) -> None:
+        self.logger = ToolkitLogger("h4_AxisDriver")
+
+    def emit(self, config: str) -> Tuple[str, str, str, str]:
+        state = _axis_driver_parse_config(config)
+        normalised = json.dumps(state, indent=2)
+        if normalised != config:
+            self.logger.trace("Axis Driver config normalised for downstream consumers")
+        slot_payloads = {
+            slot: json.dumps(_axis_driver_slot_payload(state, slot), indent=2)
+            for slot in AXIS_DRIVER_SLOT_ORDER
+        }
+        summary = _axis_driver_legacy_summary(state)
+        return (
+            slot_payloads.get("X", ""),
+            slot_payloads.get("Y", ""),
+            slot_payloads.get("Z", ""),
+            summary,
+        )
+
+
+class h4_SeedBroadcaster:
+    """Utility node that mirrors one seed value across eight outputs."""
+
+    @classmethod
+    def INPUT_TYPES(cls) -> Dict[str, Any]:  # noqa: N802
+        return {
+            "required": {
+                "seed": (
+                    "INT",
+                    {
+                        "default": 0,
+                        "min": 0,
+                        "max": 2**63 - 1,
+                        "tooltip": SEED_BROADCASTER_WIDGET_TOOLTIPS.get("seed"),
+                    },
+                ),
+                "mode": (
+                    ["fixed", "random"],
+                    {
+                        "default": "fixed",
+                        "tooltip": SEED_BROADCASTER_WIDGET_TOOLTIPS.get("mode"),
+                    },
+                ),
+            },
+            "optional": {
+                "seed_in": (
+                    "INT",
+                    {
+                        "default": 0,
+                        "forceInput": True,
+                        "tooltip": "Optional upstream seed to override the widget value.",
+                    },
+                ),
+            },
+        }
+
+    RETURN_TYPES = ("INT",) * 8
+    RETURN_NAMES = tuple(f"seed_{index}" for index in range(1, 9))
+    FUNCTION = "broadcast"
+    CATEGORY = "h4 Toolkit/Utility"
+
+    def __init__(self) -> None:
+        self.logger = ToolkitLogger("h4_SeedBroadcaster")
+        self._cached_seed: Optional[int] = None
+
+    @staticmethod
+    def _coerce_seed(value: Optional[Any]) -> int:
+        try:
+            integer = int(value)  # type: ignore[arg-type]
+        except (TypeError, ValueError):
+            integer = 0
+        return max(0, integer)
+
+    def broadcast(self, seed: int, mode: str, seed_in: Optional[int] = None) -> Tuple[int, ...]:
+        incoming_seed = seed_in if seed_in is not None else seed
+        base_seed = self._coerce_seed(incoming_seed)
+        mode_normalised = (mode or "fixed").strip().lower()
+        if mode_normalised == "random":
+            base_seed = self._coerce_seed(secrets.randbits(63))
+            self.logger.info(f"[Seed Broadcaster] Random mode: broadcasting seed {base_seed}")
+        else:
+            self.logger.info(f"[Seed Broadcaster] Fixed mode: broadcasting seed {base_seed}")
+        self._cached_seed = base_seed
+        return tuple(int(base_seed) for _ in range(8))
+
+
 def _split_lines(value: str) -> List[str]:
     return [line.strip() for line in value.splitlines() if line.strip()]
 
@@ -548,6 +1058,97 @@ def _resolve_asset_path(category: str, identifier: str) -> Optional[str]:
         return folder_paths.get_full_path(category, candidate)
     except Exception:
         return None
+
+
+def _normalise_model_family_tag(tag: Optional[str]) -> Optional[str]:
+    if tag is None:
+        return None
+    lowered = str(tag).strip().lower().replace(" ", "")
+    if not lowered:
+        return None
+    normalisers = {
+        "stable-diffusionxl": "sdxl",
+        "stablediffusionxl": "sdxl",
+        "sdxl": "sdxl",
+        "xl": "sdxl",
+        "stable-diffusion1.5": "sd15",
+        "stablediffusion1.5": "sd15",
+        "sd1.5": "sd15",
+        "sd15": "sd15",
+        "1.5": "sd15",
+        "v1-5": "sd15",
+    }
+    for needle, family in normalisers.items():
+        if needle in lowered:
+            return family
+    segments = [segment for segment in re.split(r"[^a-z0-9]+", lowered) if segment]
+    if any(segment in {"sdxl", "xl"} for segment in segments):
+        return "sdxl"
+    if any(segment in {"sd15", "15"} for segment in segments):
+        return "sd15"
+    return None
+
+
+def _infer_family_from_name(path_like: Optional[str]) -> Optional[str]:
+    if not path_like:
+        return None
+    candidate = str(path_like).replace("\\", "/").lower()
+    return _normalise_model_family_tag(candidate)
+
+
+def _family_from_file(path: Optional[str], logger: Optional[Any] = None, asset_label: str = "asset") -> Optional[str]:
+    if not path:
+        return None
+    metadata_family: Optional[str] = None
+    try:
+        if str(path).lower().endswith(".safetensors"):
+            from safetensors import safe_open
+
+            with safe_open(path, framework="pt", device="cpu") as handle:
+                meta = handle.metadata() or {}
+            for key in ("ss_base_model_version", "base_model", "format"):
+                family = _normalise_model_family_tag(meta.get(key))
+                if family:
+                    metadata_family = family
+                    break
+    except Exception as exc:  # pragma: no cover - depends on external files
+        if logger is not None:
+            logger.warn(f"[LoRA Inspector] Could not read metadata for {asset_label} '{path}': {exc}")
+    return metadata_family or _infer_family_from_name(path)
+
+
+def _infer_family_from_model_object(model_obj: Any) -> Optional[str]:
+    candidates = [model_obj, getattr(model_obj, "model", None), getattr(model_obj, "wrapped_model", None)]
+    seen: set[int] = set()
+    for candidate in candidates:
+        if candidate is None:
+            continue
+        ident = id(candidate)
+        if ident in seen:
+            continue
+        seen.add(ident)
+        for attr_name in ("model_type", "base_model", "architecture", "name", "type"):
+            value = getattr(candidate, attr_name, None)
+            family = _normalise_model_family_tag(value)
+            if family:
+                return family
+        config = getattr(candidate, "model_config", None)
+        config_items: Dict[str, Any] = {}
+        if isinstance(config, dict):
+            config_items = config
+        elif hasattr(config, "__dict__"):
+            config_items = dict(vars(config))
+        elif hasattr(config, "_asdict") and callable(getattr(config, "_asdict")):
+            try:
+                config_items = dict(config._asdict())  # type: ignore[misc]
+            except Exception:  # pragma: no cover - fallback best effort
+                config_items = {}
+        if config_items:
+            for key in ("model_type", "base_model", "architecture", "name", "type"):
+                family = _normalise_model_family_tag(config_items.get(key))
+                if family:
+                    return family
+    return None
 
 
 def resolve_checkpoint_name(token: str) -> Optional[str]:
@@ -733,6 +1334,7 @@ def _resolve_sampler_object(
     *,
     device: Optional[torch.device] = None,
     model_sampling: Optional[Any] = None,
+
     model_sampling_meta: Optional[Dict[str, Any]] = None,
 ) -> Optional[Any]:
     resolved_available: Dict[str, Any] = {
@@ -781,6 +1383,7 @@ def _resolve_sampler_object(
             continue
         attr = getattr(comfy_samplers, attr_name)
         if callable(attr):
+
             factory_candidates.append(attr)
             continue
         for method_name in ("create_sampler", "build_sampler", "make_sampler"):
@@ -1107,18 +1710,150 @@ def compose_image_grid(
     return grid.unsqueeze(0)
 
 
+def _parse_hex_colour(value: Optional[str], default: Tuple[int, int, int]) -> Tuple[int, int, int]:
+    if not isinstance(value, str):
+        return default
+    token = value.strip().lstrip("#")
+    if len(token) == 3:
+        token = "".join(ch * 2 for ch in token)
+    if len(token) != 6:
+        return default
+    try:
+        channels = tuple(int(token[index : index + 2], 16) for index in (0, 2, 4))
+    except ValueError:
+        return default
+    return channels  # type: ignore[return-value]
+
+
+def _resolve_background_colour(value: Optional[str], alpha_default: int) -> Optional[Tuple[int, int, int, int]]:
+    alpha = max(0, min(255, alpha_default))
+    presets = {
+        "black60": (0, 0, 0, int(round(255 * 0.6))),
+        "black80": (0, 0, 0, int(round(255 * 0.8))),
+        "white40": (255, 255, 255, int(round(255 * 0.4))),
+    }
+    if isinstance(value, str):
+        token = value.strip().lower()
+        if token in {"none", "transparent"}:
+            return None
+        preset = presets.get(token)
+        if preset is not None:
+            return preset
+        if token.startswith("#") or all(ch in "0123456789abcdef" for ch in token if ch != "#"):
+            red, green, blue = _parse_hex_colour(token, (0, 0, 0))
+            return (red, green, blue, alpha)
+    return (0, 0, 0, alpha)
+
+
+def _load_preferred_font(family: Optional[str], size: int) -> Any:
+    if ImageFont is None:  # pragma: no cover - Pillow optional
+        raise RuntimeError("Pillow ImageFont unavailable")
+    target_size = size if size > 0 else 18
+    candidates: List[str] = []
+    if isinstance(family, str) and family.strip():
+        candidate = family.strip()
+        candidates.append(candidate)
+        lowered = candidate.lower()
+        if not lowered.endswith((".ttf", ".otf", ".ttc")):
+            candidates.append(f"{candidate}.ttf")
+            candidates.append(f"{candidate}.otf")
+        if os.path.isfile(candidate):
+            candidates.insert(0, candidate)
+    candidates.extend(["DejaVuSans.ttf", "arial.ttf"])
+    for entry in candidates:
+        try:
+            return ImageFont.truetype(entry, target_size)
+        except Exception:
+            continue
+    return ImageFont.load_default()
+
+
+def _axis_descriptor_label(descriptor: Optional[AxisDescriptor], fallback: str) -> str:
+    if descriptor is None:
+        return fallback
+    for candidate in (descriptor.source_label, descriptor.describe()):
+        text = str(candidate or "").strip()
+        if text and text not in {"identity", "∅"}:
+            return text
+    return fallback
+
+
+def _normalise_label_text(raw: str, fallback: str) -> str:
+    text = str(raw or "").strip()
+    if not text or text.lower() == "identity" or text == "∅":
+        text = fallback
+    text = text.replace(" | ", "\n")
+    return text if text else fallback
+
+
+def _wrap_label_lines(text: str, max_chars: int, limit: int = 4) -> List[str]:
+    width = max(1, max_chars)
+    lines: List[str] = []
+    for block in text.split("\n"):
+        candidate = block.strip()
+        if not candidate:
+            continue
+        wrapped = textwrap.wrap(candidate, width=width) or [candidate]
+        lines.extend(wrapped)
+        if len(lines) >= limit:
+            break
+    return lines[:limit] if lines else [text.strip() or "base"]
+
+
+def _measure_text(
+    draw: Any,
+    text: str,
+    font: Any,
+    *,
+    spacing: int,
+    align: str,
+) -> Tuple[int, int]:
+    if hasattr(draw, "multiline_textbbox"):
+        bbox = draw.multiline_textbbox((0, 0), text, font=font, spacing=spacing, align=align)
+        return bbox[2] - bbox[0], bbox[3] - bbox[1]
+    width, height = draw.multiline_textsize(text, font=font, spacing=spacing)
+    return width, height
+
+
 def annotate_grid_image(
     grid_tensor: torch.Tensor,
     plans: List[GenerationPlan],
     rows: int,
     cols: int,
     logger: ToolkitLogger,
+    style: Optional[Dict[str, Any]] = None,
+    x_axis: Optional[List[AxisDescriptor]] = None,
+    y_axis: Optional[List[AxisDescriptor]] = None,
 ) -> torch.Tensor:
     if Image is None or ImageDraw is None or ImageFont is None:
         logger.trace("Skipping grid annotation; Pillow not available")
         return grid_tensor
     if not plans:
         return grid_tensor
+
+    style_data: Dict[str, Any] = dict(style or {})
+    layout = str(style_data.get("label_layout", "overlay") or "overlay").lower()
+    if layout not in {"overlay", "border", "none"}:
+        layout = "overlay"
+    if layout == "none":
+        return grid_tensor
+
+    font_size = int(style_data.get("font_size") or 18)
+    alignment = str(style_data.get("alignment", "left") or "left").lower()
+    if alignment not in {"left", "center", "right"}:
+        alignment = "left"
+    label_position = str(style_data.get("label_position", "top_left") or "top_left").lower()
+    if label_position not in {"top_left", "top_right", "bottom_left", "bottom_right"}:
+        label_position = "top_left"
+    background_rgba = _resolve_background_colour(style_data.get("background"), 200 if layout == "border" else 160)
+    text_colour = _parse_hex_colour(style_data.get("font_colour"), (255, 255, 255))
+    spacing = max(2, font_size // 6)
+
+    try:
+        font = _load_preferred_font(style_data.get("font_family"), font_size)
+    except Exception as exc:  # pragma: no cover - font lookup failure
+        logger.debug(f"Font preference unavailable ({exc}); falling back to default")
+        font = ImageFont.load_default()
 
     try:
         device = grid_tensor.device
@@ -1130,54 +1865,283 @@ def annotate_grid_image(
         logger.warn(f"Unable to prepare grid for annotation: {exc}")
         return grid_tensor
 
-    draw = ImageDraw.Draw(image, "RGBA")
-    try:
-        font = ImageFont.truetype("arial.ttf", 18)
-    except Exception:
-        font = ImageFont.load_default()
-
-    cell_width = image.width // max(1, cols)
-    cell_height = image.height // max(1, rows)
-    max_chars = max(8, cell_width // 9)
-
-    for index, plan in enumerate(plans):
-        label_raw = plan.label or f"Run {index + 1}"
-        label_wrapped = textwrap.wrap(label_raw, width=max_chars)
-        if not label_wrapped:
-            label_wrapped = [label_raw]
-        label_text = "\n".join(label_wrapped[:3])
-
-        text_region_width = cell_width - 12
-        if hasattr(draw, "textbbox"):
-            bbox = draw.textbbox((0, 0), label_text, font=font, spacing=2)
-            text_width = min(text_region_width, bbox[2] - bbox[0])
-            text_height = bbox[3] - bbox[1]
-        else:  # pragma: no cover - compatibility fallback
-            text_width, text_height = draw.textsize(label_text, font=font, spacing=2)
-
-        padding_x = 8
-        padding_y = 8
-        r = index // max(1, cols)
-        c = index % max(1, cols)
-        origin_x = c * cell_width + padding_x
-        origin_y = r * cell_height + padding_y
-        background_rect = (
-            origin_x - 4,
-            origin_y - 4,
-            origin_x + text_width + 8,
-            origin_y + text_height + 8,
+    if layout == "border":
+        annotated_image = _render_border_layout(
+            image,
+            plans,
+            rows,
+            cols,
+            font,
+            text_colour,
+            background_rgba,
+            alignment,
+            spacing,
+            font_size,
+            style_data,
+            x_axis or [],
+            y_axis or [],
+            logger,
+        )
+    else:
+        annotated_image = _render_overlay_layout(
+            image,
+            plans,
+            rows,
+            cols,
+            font,
+            text_colour,
+            background_rgba,
+            alignment,
+            label_position,
+            spacing,
+            font_size,
         )
 
-        try:
-            draw.rectangle(background_rect, fill=(0, 0, 0, 160))
-            draw.text((origin_x, origin_y), label_text, fill=(255, 255, 255, 255), font=font, spacing=2)
-        except Exception as exc:  # pragma: no cover - drawing fallback
-            logger.warn(f"Failed to annotate grid cell {index + 1}: {exc}")
-            break
-
-    annotated_array = np.asarray(image, dtype=np.float32) / 255.0
+    annotated_rgb = annotated_image.convert("RGB") if annotated_image.mode != "RGB" else annotated_image
+    annotated_array = np.asarray(annotated_rgb, dtype=np.float32) / 255.0
     annotated_tensor = torch.from_numpy(annotated_array).to(grid_tensor.dtype).unsqueeze(0)
     return annotated_tensor.to(device)
+
+
+def _render_overlay_layout(
+    image: Any,
+    plans: List[GenerationPlan],
+    rows: int,
+    cols: int,
+    font: Any,
+    text_colour: Tuple[int, int, int],
+    background_rgba: Optional[Tuple[int, int, int, int]],
+    alignment: str,
+    label_position: str,
+    spacing: int,
+    font_size: int,
+) -> Any:
+    draw = ImageDraw.Draw(image, "RGBA")
+    cols_safe = max(1, cols)
+    rows_safe = max(1, rows)
+    cell_width = image.width // cols_safe
+    cell_height = image.height // rows_safe
+    margin = max(6, font_size // 3)
+    approx_char_width = max(font_size * 0.55, 6.0)
+    available_text_width = max(16, cell_width - (margin * 2))
+    max_chars = max(4, int(available_text_width / approx_char_width))
+
+    for index, plan in enumerate(plans):
+        row_index = index // cols_safe
+        col_index = index % cols_safe
+        cell_origin_x = col_index * cell_width
+        cell_origin_y = row_index * cell_height
+        fallback_label = f"Run {index + 1}"
+        label_text = _normalise_label_text(plan.label, fallback_label)
+        wrapped_lines = _wrap_label_lines(label_text, max_chars)
+        text_block = "\n".join(wrapped_lines)
+        text_width, text_height = _measure_text(draw, text_block, font, spacing=spacing, align=alignment)
+        rect_padding = 6
+        rect_width = text_width + rect_padding * 2
+        rect_height = text_height + rect_padding * 2
+        rect_width = min(rect_width, cell_width - margin)
+        rect_height = min(rect_height, cell_height - margin)
+
+        if label_position in {"top_left", "top_right"}:
+            rect_y = cell_origin_y + margin
+        else:
+            rect_y = cell_origin_y + cell_height - margin - rect_height
+
+        if label_position in {"top_left", "bottom_left"}:
+            rect_x = cell_origin_x + margin
+        else:
+            rect_x = cell_origin_x + cell_width - margin - rect_width
+
+        rect_x = max(cell_origin_x + 2, min(rect_x, cell_origin_x + cell_width - rect_width - 2))
+        rect_y = max(cell_origin_y + 2, min(rect_y, cell_origin_y + cell_height - rect_height - 2))
+
+        if background_rgba is not None and background_rgba[3] > 0:
+            draw.rectangle(
+                (
+                    rect_x,
+                    rect_y,
+                    rect_x + rect_width,
+                    rect_y + rect_height,
+                ),
+                fill=background_rgba,
+            )
+
+        if alignment == "center":
+            text_x = rect_x + (rect_width - text_width) / 2
+        elif alignment == "right":
+            text_x = rect_x + rect_width - rect_padding - text_width
+        else:
+            text_x = rect_x + rect_padding
+        text_y = rect_y + (rect_height - text_height) / 2
+        draw.multiline_text(
+            (text_x, text_y),
+            text_block,
+            font=font,
+            fill=text_colour,
+            spacing=spacing,
+            align=alignment,
+        )
+    return image
+
+
+def _render_border_layout(
+    image: Any,
+    plans: List[GenerationPlan],
+    rows: int,
+    cols: int,
+    font: Any,
+    text_colour: Tuple[int, int, int],
+    background_rgba: Optional[Tuple[int, int, int, int]],
+    alignment: str,
+    spacing: int,
+    font_size: int,
+    style: Dict[str, Any],
+    x_axis: List[AxisDescriptor],
+    y_axis: List[AxisDescriptor],
+    logger: ToolkitLogger,
+) -> Any:
+    draw_probe = ImageDraw.Draw(image, "RGBA")
+    cols_safe = max(1, cols)
+    rows_safe = max(1, rows)
+    cell_width = image.width // cols_safe
+    cell_height = image.height // rows_safe
+    header_padding = max(6, font_size // 3)
+
+    col_labels: List[str] = []
+    if x_axis:
+        for index in range(min(len(x_axis), cols_safe)):
+            col_labels.append(_axis_descriptor_label(x_axis[index], f"Column {index + 1}"))
+    if len(col_labels) < cols_safe:
+        for index in range(len(col_labels), cols_safe):
+            fallback = plans[index].label if index < len(plans) else ""
+            col_labels.append(_axis_descriptor_label(None, _normalise_label_text(fallback, f"Column {index + 1}")))
+
+    row_labels: List[str] = []
+    if y_axis:
+        for index in range(min(len(y_axis), rows_safe)):
+            row_labels.append(_axis_descriptor_label(y_axis[index], f"Row {index + 1}"))
+    if len(row_labels) < rows_safe:
+        for index in range(len(row_labels), rows_safe):
+            plan_index = index * cols_safe
+            fallback = plans[plan_index].label if plan_index < len(plans) else ""
+            row_labels.append(_axis_descriptor_label(None, _normalise_label_text(fallback, f"Row {index + 1}")))
+
+    approx_char_width = max(font_size * 0.55, 6.0)
+    available_col_width = max(24, cell_width - header_padding * 2)
+    max_chars_col = max(4, int(available_col_width / approx_char_width))
+
+    col_blocks: List[Tuple[str, int, int]] = []
+    max_col_height = 0
+    for index, label in enumerate(col_labels):
+        text = _normalise_label_text(label, f"Column {index + 1}")
+        wrapped = _wrap_label_lines(text, max_chars_col)
+        text_block = "\n".join(wrapped)
+        width, height = _measure_text(draw_probe, text_block, font, spacing=spacing, align=alignment)
+        col_blocks.append((text_block, width, height))
+        max_col_height = max(max_col_height, height)
+
+    row_blocks: List[Tuple[str, int, int]] = []
+    max_row_width = 0
+    for index, label in enumerate(row_labels):
+        text_block = _normalise_label_text(label, f"Row {index + 1}")
+        width, height = _measure_text(draw_probe, text_block, font, spacing=spacing, align="left")
+        row_blocks.append((text_block, width, height))
+        max_row_width = max(max_row_width, width)
+
+    axis_headers_enabled = bool(style.get("show_axis_headers", True))
+    axis_x_text_block = ""
+    axis_y_text_block = ""
+    axis_x_metrics = (0, 0)
+    axis_y_metrics = (0, 0)
+    if axis_headers_enabled:
+        candidate_x = str(style.get("custom_label_x") or "").strip()
+        if candidate_x:
+            axis_x_text_block = _normalise_label_text(candidate_x, candidate_x)
+            axis_x_metrics = _measure_text(draw_probe, axis_x_text_block, font, spacing=spacing, align="center")
+        candidate_y = str(style.get("custom_label_y") or "").strip()
+        if candidate_y:
+            axis_y_text_block = _normalise_label_text(candidate_y, candidate_y)
+            axis_y_metrics = _measure_text(draw_probe, axis_y_text_block, font, spacing=spacing, align="left")
+
+    column_panel_height = (max_col_height + header_padding * 2) if col_blocks else 0
+    row_panel_width = (max_row_width + header_padding * 2) if row_blocks else 0
+    axis_x_panel_height = (axis_x_metrics[1] + header_padding * 2) if axis_x_text_block else 0
+    axis_y_panel_width = (axis_y_metrics[0] + header_padding * 2) if axis_y_text_block else 0
+
+    top_panel_height = int(axis_x_panel_height + column_panel_height)
+    left_panel_width = int(axis_y_panel_width + row_panel_width)
+
+    new_width = image.width + left_panel_width
+    new_height = image.height + top_panel_height
+    canvas = Image.new("RGBA", (new_width, new_height), (0, 0, 0, 0))
+    canvas.paste(image, (left_panel_width, top_panel_height))
+    draw_canvas = ImageDraw.Draw(canvas, "RGBA")
+
+    if background_rgba is not None and background_rgba[3] > 0:
+        draw_canvas.rectangle((0, 0, new_width, top_panel_height), fill=background_rgba)
+        draw_canvas.rectangle((0, top_panel_height, left_panel_width, new_height), fill=background_rgba)
+
+    text_fill = text_colour
+
+    if axis_x_text_block:
+        axis_x_x = left_panel_width + (image.width - axis_x_metrics[0]) / 2
+        axis_x_y = max(header_padding // 2, header_padding)
+        draw_canvas.multiline_text(
+            (axis_x_x, axis_x_y),
+            axis_x_text_block,
+            font=font,
+            fill=text_fill,
+            spacing=spacing,
+            align="center",
+        )
+
+    if axis_y_text_block:
+        axis_y_x = max(header_padding // 2, header_padding)
+        axis_y_y = top_panel_height + (image.height - axis_y_metrics[1]) / 2
+        draw_canvas.multiline_text(
+            (axis_y_x, axis_y_y),
+            axis_y_text_block,
+            font=font,
+            fill=text_fill,
+            spacing=spacing,
+            align="left",
+        )
+
+    column_offset_y = axis_x_panel_height if axis_x_panel_height else 0
+    for index, (text_block, width, height) in enumerate(col_blocks):
+        origin_x = left_panel_width + index * cell_width
+        if alignment == "center":
+            text_x = origin_x + (cell_width - width) / 2
+        elif alignment == "right":
+            text_x = origin_x + cell_width - header_padding - width
+        else:
+            text_x = origin_x + header_padding
+        text_y = column_offset_y + header_padding
+        draw_canvas.multiline_text(
+            (text_x, text_y),
+            text_block,
+            font=font,
+            fill=text_fill,
+            spacing=spacing,
+            align=alignment,
+        )
+
+    row_offset_x = axis_y_panel_width if axis_y_panel_width else 0
+    for index, (text_block, width, height) in enumerate(row_blocks):
+        origin_y = top_panel_height + index * cell_height
+        text_x = header_padding + row_offset_x
+        text_y = origin_y + (cell_height - height) / 2
+        text_y = max(top_panel_height + header_padding, text_y)
+        draw_canvas.multiline_text(
+            (text_x, text_y),
+            text_block,
+            font=font,
+            fill=text_fill,
+            spacing=spacing,
+            align="left",
+        )
+
+    return canvas
 
 
 def _ensure_latent_dict(latent: Any) -> Dict[str, torch.Tensor]:
@@ -1303,6 +2267,10 @@ class h4_PlotXY:
                 "bypass_engine": ("BOOLEAN", {"default": False, "label": "Bypass (passthrough mode)"}),
             },
             "optional": {
+                "axis_x": ("STRING", {"default": "", "forceInput": True}),
+                "axis_y": ("STRING", {"default": "", "forceInput": True}),
+                "axis_z": ("STRING", {"default": "", "forceInput": True}),
+                "legacy_summary": ("STRING", {"default": "", "forceInput": True}),
                 "model_in": ("MODEL",),
                 "clip_in": ("CLIP",),
                 "vae_in": ("VAE",),
@@ -1363,6 +2331,7 @@ class h4_PlotXY:
             self._preview_max_resolution: Optional[int] = preview_max_int if preview_max_int > 0 else None
         else:
             self._preview_max_resolution = None
+        self._model_family_cache: Dict[int, str] = {}
 
     def _load_checkpoint(self, checkpoint_name: str) -> Tuple[Any, Any, Any]:
         resolved_path = _resolve_asset_path("checkpoints", checkpoint_name)
@@ -1371,6 +2340,7 @@ class h4_PlotXY:
             self.logger.error(message)
             raise FileNotFoundError(message)
         self.logger.trace(f"Loading checkpoint: {resolved_path}")
+        checkpoint_family = _family_from_file(resolved_path, self.logger, "Checkpoint")
         load_fn = getattr(comfy_sd, "load_checkpoint_guess_config", None)
         if load_fn is None:
             load_fn = getattr(comfy_sd, "load_checkpoint", None)
@@ -1398,6 +2368,16 @@ class h4_PlotXY:
             self.logger.warn("Checkpoint did not supply a CLIP; downstream overrides may fill this gap")
         if vae is None:
             self.logger.warn("Checkpoint did not supply a VAE; downstream overrides may fill this gap")
+        try:
+            setattr(model, "_h4_checkpoint_path", resolved_path)
+        except Exception:  # pragma: no cover - attribute may be read-only
+            pass
+        if checkpoint_family:
+            try:
+                setattr(model, "_h4_checkpoint_family", checkpoint_family)
+            except Exception:  # pragma: no cover - attribute may be read-only
+                pass
+            self._model_family_cache[id(model)] = checkpoint_family
         self.logger.info(f"Checkpoint ready: {checkpoint_name}")
         return model, clip, vae
 
@@ -1691,11 +2671,60 @@ class h4_PlotXY:
         loras: Iterable[Tuple[str, float]],
     ) -> Tuple[Any, Any]:
         patched_model, patched_clip = model, clip
-        for lora_name, strength in loras:
+        lora_sequence = list(loras)
+        if not lora_sequence:
+            return patched_model, patched_clip
+
+        def _record_family(target: Any, family: Optional[str]) -> None:
+            if target is None or family is None:
+                return
+            try:
+                setattr(target, "_h4_checkpoint_family", family)
+            except Exception:  # pragma: no cover - attribute may be read-only
+                pass
+            self._model_family_cache[id(target)] = family
+
+        active_family: Optional[str] = self._model_family_cache.get(id(model))
+        if active_family is None:
+            candidate = getattr(model, "_h4_checkpoint_family", None)
+            active_family = _normalise_model_family_tag(candidate)
+        if active_family is None:
+            inferred = _infer_family_from_model_object(model)
+            active_family = inferred
+        if active_family is None:
+            self.logger.info(
+                "Checkpoint family could not be determined; LoRA compatibility checks will be best-effort"
+            )
+        else:
+            _record_family(model, active_family)
+
+        for lora_name, strength in lora_sequence:
+            if strength == 0:
+                self.logger.trace(f"Skipping LoRA {lora_name} with zero strength")
+                continue
+            resolved_path = _resolve_asset_path("loras", lora_name) or lora_name
+            lora_family = _family_from_file(resolved_path, self.logger, "LoRA")
+            if lora_family:
+                self.logger.trace(f"LoRA {lora_name} declared family '{lora_family}'")
+            else:
+                self.logger.trace(f"LoRA {lora_name} has no detectable family metadata")
+            if active_family and lora_family and active_family != lora_family:
+                message = (
+                    f"LoRA '{lora_name}' targets '{lora_family}' but checkpoint family is '{active_family}'"
+                )
+                self.logger.error(message)
+                raise RuntimeError(message)
+            if active_family is None and lora_family:
+                active_family = lora_family
+                self.logger.info(
+                    f"Assuming checkpoint family '{active_family}' based on LoRA '{lora_name}' metadata"
+                )
             self.logger.trace(f"Applying LoRA {lora_name} @ {strength}")
             patched_model, patched_clip = self.lora_loader.load_lora(
                 patched_model, patched_clip, lora_name, strength, strength
             )
+            if active_family:
+                _record_family(patched_model, active_family)
         return patched_model, patched_clip
 
     def _get_preview_handlers(self) -> Tuple[Optional[Callable[..., Any]], Optional[Callable[..., Any]]]:
@@ -2083,6 +3112,10 @@ class h4_PlotXY:
         y_axis_mode: str,
         y_axis_values: str,
         bypass_engine: bool,
+    axis_x: Optional[str] = None,
+    axis_y: Optional[str] = None,
+    axis_z: Optional[str] = None,
+    legacy_summary: Optional[str] = None,
         model_in: Optional[Any] = None,
         clip_in: Optional[Any] = None,
         vae_in: Optional[Any] = None,
@@ -2272,6 +3305,51 @@ class h4_PlotXY:
 
         x_descriptors = parse_axis_entries(x_axis_mode, x_axis_values)
         y_descriptors = parse_axis_entries(y_axis_mode, y_axis_values)
+        axis_driver_style: Optional[Dict[str, Any]] = None
+
+        def _apply_axis_driver_override(slot_label: str, payload_text: Optional[str]) -> Optional[List[AxisDescriptor]]:
+            if not payload_text:
+                return None
+            try:
+                payload = json.loads(payload_text)
+            except Exception as exc:
+                self.logger.warn(f"Axis Driver payload for {slot_label} axis could not be parsed: {exc}")
+                return None
+            descriptors, style = _axis_driver_payload_to_descriptors(payload)
+            nonlocal axis_driver_style
+            if style and axis_driver_style is None:
+                axis_driver_style = style
+            if descriptors:
+                self.logger.info(
+                    f"Axis Driver override applied to {slot_label} axis with {len(descriptors)} item(s)"
+                )
+                return descriptors
+            return None
+
+        override_x = _apply_axis_driver_override("X", axis_x)
+        if override_x is not None:
+            x_descriptors = override_x
+        override_y = _apply_axis_driver_override("Y", axis_y)
+        if override_y is not None:
+            y_descriptors = override_y
+        override_z = _apply_axis_driver_override("Z", axis_z)
+        if override_z is not None:
+            self.logger.info(
+                "Axis Driver Z axis data received; third-dimension plotting will be supported in a future release"
+            )
+        if legacy_summary and legacy_summary.strip():
+            self.logger.trace("Axis Driver summary:\n" + legacy_summary.strip())
+        if axis_driver_style:
+            style_snapshot = {
+                "label_layout": axis_driver_style.get("label_layout"),
+                "font_family": axis_driver_style.get("font_family"),
+                "font_size": axis_driver_style.get("font_size"),
+            }
+            self.logger.trace(
+                "Axis Driver style preferences captured: "
+                + ", ".join(f"{key}={value}" for key, value in style_snapshot.items() if value is not None)
+            )
+
         plans = build_generation_matrix(
             base_checkpoint=checkpoint,
             x_descriptors=x_descriptors,
@@ -2393,7 +3471,16 @@ class h4_PlotXY:
         model_management.soft_empty_cache()
 
         grid = compose_image_grid(grid_images, grid_rows, grid_cols)
-        grid = annotate_grid_image(grid, plans, grid_rows, grid_cols, self.logger)
+        grid = annotate_grid_image(
+            grid,
+            plans,
+            grid_rows,
+            grid_cols,
+            self.logger,
+            style=axis_driver_style,
+            x_axis=x_descriptors,
+            y_axis=y_descriptors,
+        )
         stacked = torch.cat(image_stack, dim=0) if image_stack else grid
         try:
             execution_report = self._build_report(plans, plan_summaries, (grid_rows, grid_cols))
@@ -3255,28 +4342,321 @@ class h4_DebugATronRouter(h4_DebugATron3000):
         return config
 
 
+class h4_ExecutionLogger(h4_DebugATron3000):
+    """Console mirror node that summarises connected payloads into a log string."""
+
+    SLOT_DEFINITIONS = DEBUG_SLOT_DEFINITIONS
+    SLOT_TOOLTIPS = DEBUG_SLOT_TOOLTIPS
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("log_summary",)
+    FUNCTION = "log"
+    CATEGORY = "h4 Toolkit/Debug"
+
+    @classmethod
+    def INPUT_TYPES(cls) -> Dict[str, Any]:  # noqa: N802
+        optional_inputs: Dict[str, Tuple[str, Dict[str, Any]]] = {}
+        for slot_name, display_name, slot_type in cls.SLOT_DEFINITIONS:
+            tooltip = cls.SLOT_TOOLTIPS.get(slot_name)
+            options: Dict[str, Any] = {"default": None, "label": display_name}
+            if tooltip:
+                options["tooltip"] = tooltip
+            optional_inputs[slot_name] = (slot_type, options)
+        optional_inputs.update(
+            {
+                "show_types": (
+                    "BOOLEAN",
+                    {
+                        "default": True,
+                        "label": "Show payload types",
+                        "tooltip": EXECUTION_LOGGER_WIDGET_TOOLTIPS.get("show_types"),
+                    },
+                ),
+                "show_shapes": (
+                    "BOOLEAN",
+                    {
+                        "default": True,
+                        "label": "Show tensor shapes",
+                        "tooltip": EXECUTION_LOGGER_WIDGET_TOOLTIPS.get("show_shapes"),
+                    },
+                ),
+            }
+        )
+        return {
+            "required": {
+                "log_level": (
+                    ["INFO", "DEBUG", "WARNING"],
+                    {
+                        "default": "INFO",
+                        "label": "Log level",
+                        "tooltip": EXECUTION_LOGGER_WIDGET_TOOLTIPS.get("log_level"),
+                    },
+                ),
+                "prefix": (
+                    "STRING",
+                    {
+                        "default": "[EXEC]",
+                        "tooltip": EXECUTION_LOGGER_WIDGET_TOOLTIPS.get("prefix"),
+                    },
+                ),
+            },
+            "optional": optional_inputs,
+        }
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.logger = ToolkitLogger("h4_ExecutionLogger")
+
+    def log(
+        self,
+        log_level: str,
+        prefix: str,
+        show_types: bool = True,
+        show_shapes: bool = True,
+        **dynamic_slots: Any,
+    ) -> Tuple[str]:
+        level = (log_level or "INFO").strip().upper()
+        log_methods = {
+            "DEBUG": self.logger.debug,
+            "INFO": self.logger.info,
+            "WARNING": self.logger.warn,
+        }
+        emit = log_methods.get(level, self.logger.info)
+        summary_lines: List[str] = []
+        for slot_name, display_name, slot_type in self.SLOT_DEFINITIONS:
+            payload = dynamic_slots.get(slot_name)
+            if payload is None:
+                continue
+            descriptor = self._summarise_object(payload)
+            line = f"{prefix} {display_name}: {descriptor}".strip()
+            emit(line)
+            summary_lines.append(f"{display_name}: {descriptor}")
+            if show_types:
+                type_name = type(payload).__name__
+                type_line = f"    type={type_name}"
+                emit(f"{prefix} {type_line}".strip())
+                summary_lines.append(type_line)
+            if show_shapes:
+                for detail in self._describe_payload(payload, slot_type):
+                    detail_line = f"    {detail}"
+                    emit(f"{prefix} {detail}".strip())
+                    summary_lines.append(detail_line)
+        if not summary_lines:
+            summary_lines.append(f"{prefix} No inputs connected.")
+            emit(summary_lines[0])
+        summary_text = "\n".join(summary_lines)
+        return (summary_text,)
+
+
+class h4_DebugATron3000Console(h4_DebugATron3000):
+    """Output-node variant that emits an HTML dossier alongside routed payloads."""
+
+    SLOT_DEFINITIONS = DEBUG_SLOT_DEFINITIONS
+    SLOT_TOOLTIPS = DEBUG_SLOT_TOOLTIPS
+    RETURN_TYPES = ("STRING",) + DEBUG_SLOT_RETURN_TYPES
+    RETURN_NAMES = ("html_log",) + DEBUG_SLOT_RETURN_NAMES
+    FUNCTION = "render"
+    CATEGORY = "h4 Toolkit/Debug"
+
+    @classmethod
+    def INPUT_TYPES(cls) -> Dict[str, Any]:  # noqa: N802
+        config = super().INPUT_TYPES()
+        optional = config.setdefault("optional", {})
+        optional.update(
+            {
+                "display_mode": (
+                    ["console_only", "html_only", "both"],
+                    {
+                        "default": "both",
+                        "label": "Display mode",
+                        "tooltip": "Choose whether to emit console logs, HTML, or both.",
+                    },
+                ),
+                "color_scheme": (
+                    list(CONSOLE_COLOR_SCHEMES.keys()),
+                    {
+                        "default": "cyberpunk",
+                        "label": "Colour scheme",
+                        "tooltip": "Palette applied to the rendered HTML dossier.",
+                    },
+                ),
+                "verbosity": (
+                    list(CONSOLE_VERBOSITY_LEVELS.keys()),
+                    {
+                        "default": "normal",
+                        "label": "Verbosity",
+                        "tooltip": "Controls how many diagnostic lines are included per slot.",
+                    },
+                ),
+                "show_timestamps": (
+                    "BOOLEAN",
+                    {
+                        "default": True,
+                        "label": "Show timestamps",
+                        "tooltip": "When enabled, each slot section includes the current time stamp.",
+                    },
+                ),
+            }
+        )
+        return config
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.logger = ToolkitLogger("h4_DebugATronConsole")
+
+    def render(
+        self,
+        mode: str,
+        display_mode: str = "both",
+        color_scheme: str = "cyberpunk",
+        verbosity: str = "normal",
+        show_timestamps: bool = True,
+        go_ultra: bool = False,
+        ultra_capture_first_step: bool = ULTRA_CONTROL_DEFAULTS["ultra_capture_first_step"],
+        ultra_capture_mid_step: bool = ULTRA_CONTROL_DEFAULTS["ultra_capture_mid_step"],
+        ultra_capture_last_step: bool = ULTRA_CONTROL_DEFAULTS["ultra_capture_last_step"],
+        ultra_preview_images: bool = ULTRA_CONTROL_DEFAULTS["ultra_preview_images"],
+        ultra_json_log: bool = ULTRA_CONTROL_DEFAULTS["ultra_json_log"],
+        ultra_highlight_missing_conditioning: bool = ULTRA_CONTROL_DEFAULTS["ultra_highlight_missing_conditioning"],
+        ultra_token_preview: bool = ULTRA_CONTROL_DEFAULTS["ultra_token_preview"],
+        ultra_latent_anomaly_checks: bool = ULTRA_CONTROL_DEFAULTS["ultra_latent_anomaly_checks"],
+        ultra_model_diff_tracking: bool = ULTRA_CONTROL_DEFAULTS["ultra_model_diff_tracking"],
+        ultra_watch_expression: str = ULTRA_CONTROL_DEFAULTS["ultra_watch_expression"],
+        ultra_cache_artifacts: bool = ULTRA_CONTROL_DEFAULTS["ultra_cache_artifacts"],
+        **dynamic_slots: Any,
+    ) -> Tuple[str, ...]:
+        routed_outputs = super().route(
+            mode,
+            go_ultra=go_ultra,
+            ultra_capture_first_step=ultra_capture_first_step,
+            ultra_capture_mid_step=ultra_capture_mid_step,
+            ultra_capture_last_step=ultra_capture_last_step,
+            ultra_preview_images=ultra_preview_images,
+            ultra_json_log=ultra_json_log,
+            ultra_highlight_missing_conditioning=ultra_highlight_missing_conditioning,
+            ultra_token_preview=ultra_token_preview,
+            ultra_latent_anomaly_checks=ultra_latent_anomaly_checks,
+            ultra_model_diff_tracking=ultra_model_diff_tracking,
+            ultra_watch_expression=ultra_watch_expression,
+            ultra_cache_artifacts=ultra_cache_artifacts,
+            **dynamic_slots,
+        )
+
+        include_html = (display_mode or "both").lower() in {"html_only", "both"}
+        verbosity_limit = CONSOLE_VERBOSITY_LEVELS.get(verbosity, 2)
+        palette = CONSOLE_COLOR_SCHEMES.get(color_scheme, CONSOLE_COLOR_SCHEMES["cyberpunk"])
+
+        sections: List[str] = []
+        timestamp = datetime.utcnow().strftime("%H:%M:%S") if show_timestamps else ""
+        for slot_name, display_name, slot_type in self.SLOT_DEFINITIONS:
+            payload = dynamic_slots.get(slot_name)
+            connected = payload is not None
+            descriptor = self._summarise_object(payload) if connected else "<disconnected>"
+            details = self._describe_payload(payload, slot_type) if connected else []
+            if verbosity_limit >= 0:
+                details = details[:verbosity_limit]
+            escaped_title = html.escape(display_name)
+            escaped_descriptor = html.escape(descriptor)
+            detail_items = "".join(
+                f"<li>{html.escape(detail)}</li>" for detail in details
+            )
+            timestamp_html = f"<span class=\"timestamp\">{html.escape(timestamp)}</span>" if timestamp else ""
+            section = (
+                f"<section class=\"slot\">"
+                f"<header><span class=\"title\">{escaped_title}</span>{timestamp_html}</header>"
+                f"<div class=\"descriptor\">{escaped_descriptor}</div>"
+            )
+            if detail_items:
+                section += f"<ul class=\"details\">{detail_items}</ul>"
+            section += "</section>"
+            sections.append(section)
+
+        html_report = ""
+        if include_html:
+            css = textwrap.dedent(
+                f"""
+                <style>
+                    .h4-console {{
+                        background: {palette['background']};
+                        color: {palette['text']};
+                        font-family: 'Segoe UI', 'Roboto', sans-serif;
+                        padding: 16px;
+                    }}
+                    .h4-console .slot {{
+                        background: {palette['panel']};
+                        border-left: 4px solid {palette['accent']};
+                        margin-bottom: 12px;
+                        padding: 12px 16px;
+                        border-radius: 8px;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+                    }}
+                    .h4-console .slot header {{
+                        display: flex;
+                        justify-content: space-between;
+                        font-weight: 600;
+                        letter-spacing: 0.05em;
+                        margin-bottom: 6px;
+                        color: {palette['accent']};
+                    }}
+                    .h4-console .slot .descriptor {{
+                        font-size: 0.95rem;
+                        margin-bottom: 4px;
+                    }}
+                    .h4-console .slot .details {{
+                        list-style: disc;
+                        margin: 0 0 0 20px;
+                        color: {palette['muted']};
+                    }}
+                    .h4-console .timestamp {{
+                        font-size: 0.8rem;
+                        color: {palette['muted']};
+                    }}
+                </style>
+                """
+            ).strip()
+            body = "".join(sections)
+            html_report = f"{css}<div class=\"h4-console\">{body}</div>"
+
+        return (html_report,) + routed_outputs
+
+
 NODE_CLASS_MAPPINGS = {
+    "h4AxisDriver": h4_AxisDriver,
     "h4PlotXY": h4_PlotXY,
     "h4DebugATron3000": h4_DebugATron3000,
     "h4DebugATronRouter": h4_DebugATronRouter,
+    "h4DebugATron3000Console": h4_DebugATron3000Console,
+    "h4ExecutionLogger": h4_ExecutionLogger,
+    "h4SeedBroadcaster": h4_SeedBroadcaster,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
+    "h4AxisDriver": f"h4 : Axis Driver (v{AXIS_DRIVER_VERSION})",
     "h4PlotXY": f"h4 : The Engine (Simple Sampler+Plot) v{PLOT_NODE_VERSION}",
     "h4DebugATron3000": f"h4 : Debug-a-Tron-3000 (v{DEBUG_NODE_VERSION})",
     "h4DebugATronRouter": f"h4 : Debug-a-Tron-3000 Router (v{DEBUG_NODE_VERSION})",
+    "h4DebugATron3000Console": "h4 : Debug-a-Tron-3000 CONSOLE (v3.0.0) - Now in Technicolor™",
+    "h4ExecutionLogger": "h4 : Execution Logger (v1.0.0) - Console Mirror",
+    "h4SeedBroadcaster": "h4 : Seed Broadcaster (v1.0.0) - One In, Many Out",
 }
 
 NODE_TOOLTIP_MAPPINGS = {
+    "h4AxisDriver": AXIS_DRIVER_WIDGET_TOOLTIPS,
     "h4PlotXY": PLOT_WIDGET_TOOLTIPS,
     "h4DebugATron3000": DEBUG_WIDGET_TOOLTIPS,
     "h4DebugATronRouter": DEBUG_WIDGET_TOOLTIPS,
+    "h4DebugATron3000Console": DEBUG_WIDGET_TOOLTIPS,
+    "h4ExecutionLogger": EXECUTION_LOGGER_WIDGET_TOOLTIPS,
+    "h4SeedBroadcaster": SEED_BROADCASTER_WIDGET_TOOLTIPS,
 }
 
 __all__ = [
+    "h4_AxisDriver",
     "h4_PlotXY",
     "h4_DebugATron3000",
     "h4_DebugATronRouter",
+    "h4_DebugATron3000Console",
+    "h4_ExecutionLogger",
+    "h4_SeedBroadcaster",
     "NODE_CLASS_MAPPINGS",
     "NODE_DISPLAY_NAME_MAPPINGS",
     "NODE_TOOLTIP_MAPPINGS",
