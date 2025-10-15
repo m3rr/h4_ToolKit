@@ -250,7 +250,10 @@
       <li><a href="#debug-modernisation">Debug-a-Tron Modernisation Log</a></li>
       <li><a href="#architecture">Architecture &amp; Pipelines</a></li>
   <li><a href="#plot-node">The Engine (h4_PlotXY) Deep Dive</a></li>
+      <li><a href="#axis-driver">Axis Driver Visual Config</a></li>
       <li><a href="#debug-node">Debug-a-Tron Suite</a></li>
+  <li><a href="#debug-console">Debug Console</a></li>
+  <li><a href="#utility-nodes">Utility Nodes</a></li>
       <li><a href="#dependencies">Dependencies &amp; Telemetry</a></li>
       <li><a href="#code">Code Appendix</a></li>
       <li><a href="#roadmap">Future-Proof Planning</a></li>
@@ -269,6 +272,7 @@
             <li><strong>h4 : The Engine</strong> (<code>h4_PlotXY</code>) orchestrates checkpoint loading, sampler/scheduler swaps, LoRA layering, grid assembly, and fast previews.</li>
             <li><strong>h4_Debug-a-Tron suite</strong> provides console-first monitoring plus a lightweight router variant for live passthroughs.</li>
             <li><strong>UX polish</strong> via JavaScript injects placeholders, tooltips, and dynamic sockets without bloating the node count.</li>
+            <li><strong>New specialty nodes</strong> add HTML reporting (<code>h4_DebugATron3000Console</code>), seed fan-out (<code>h4_SeedBroadcaster</code>), and console mirroring (<code>h4_ExecutionLogger</code>).</li>
           </ul>
         </div>
         <div class="panel">
@@ -283,6 +287,21 @@
       <div class="reminder">
         Maintainer Marker &mdash; confirm <code>TOOLKIT_VERSION</code>, <code>PLOT_NODE_VERSION</code>, and <code>DEBUG_NODE_VERSION</code> stay aligned with release notes before packaging.
       </div>
+    </section>
+
+    <section id="latest-update">
+      <h2>Latest Field Notes &mdash; 15 Oct 2025</h2>
+      <p>
+        Quick rundown of the restoration sprint that brought the toolkit back online after the accidental node purge
+        and the Axis Driver overlay hiccup.
+      </p>
+      <ul>
+        <li><strong>Node Recovery:</strong> Re-hydrated <code>h4_SeedBroadcaster</code>, <code>h4_DebugATron3000Console</code>, and <code>h4_ExecutionLogger</code> from historical commits, rebuilt their tooltip dictionaries, and re-registered every class.</li>
+        <li><strong>Label Layout Fix:</strong> Border mode now truly expands the grid canvas, paints top/left headers, respects custom axis labels, and keeps overlay mode untouched. No more faux overlays pretending to be borders.</li>
+        <li><strong>LoRA Guard Rails:</strong> Family detection compares checkpoints and LoRAs. Mismatched combos now shout loudly and abort instead of applying quietly.</li>
+        <li><strong>Console Polish:</strong> Colour scheme helpers, verbosity presets, and execution logging are back in circulation for friendly run reports.</li>
+        <li><strong>Testing Status:</strong> Manual ComfyUI smoke tests only. No automated suite yet; keep an eye on console traces after future merges.</li>
+      </ul>
     </section>
 
     <section id="remediation-log">
@@ -442,6 +461,15 @@
         <li><strong>Debug-a-Tron Run</strong> &mdash; console node prints formatted logs while router variant defaults to passthrough using shared dynamic sockets.</li>
       </ol>
 
+      <h3>Wiring Overview</h3>
+      <pre>
+Axis Drivers ──▶ h4_PlotXY "The Engine" ──▶ h4_DebugATron stack ──▶ Outputs / Saves
+     │                   │                          │
+     ├─ X / Y / Z JSON ─┘                          ├─ h4_DebugATron3000Console (html_log + passthrough)
+     │                                              ├─ h4_ExecutionLogger (log_summary)
+     └─ Style payloads feed grid annotation         └─ h4_SeedBroadcaster can sit upstream of multiple samplers
+      </pre>
+
       <details>
         <summary>Telemetry Hooks</summary>
         <p>All helpers and node methods route through <code>ToolkitLogger</code>. Flip the <code>TRACE</code> flag to silence console chatter post-debug. Preview failures are downgraded to warnings to avoid collapsing the run.</p>
@@ -510,6 +538,57 @@
         Maintainer Marker &mdash; if ComfyUI introduces new socket types, extend the wildcard count and UI type dictionary in tandem for both variants. Branch naming is controlled centrally inside <code>ROUTER_BRANCH_SUFFIXES</code>.</div>
     </section>
 
+    <section id="debug-console">
+      <h2>Debug Console &mdash; HTML Telemetry Node</h2>
+      <p>The <strong>h4_DebugATron3000Console</strong> takes the base Debug-a-Tron diagnostics and packages them into a neon HTML dossier while still mirroring payloads downstream. It is registered as an output node so the rendered report is immediately visible inside ComfyUI&rsquo;s right-hand panel.</p>
+
+      <h3>Display Deck</h3>
+      <ul>
+        <li><strong>Display Mode</strong>: Choose <em>console_only</em>, <em>html_only</em>, or <em>both</em> depending on whether you want stdout, the HTML artefact, or the full experience.</li>
+        <li><strong>Color Scheme</strong>: Pick from <em>dark</em>, <em>light</em>, <em>matrix</em>, or the default <em>cyberpunk</em> palette to match dashboards or livestream overlays.</li>
+        <li><strong>Verbosity</strong>: Dial detail between <em>minimal</em>, <em>normal</em>, <em>verbose</em>, and <em>trace</em> (tensor stats, conditioning previews, latent history depth).</li>
+        <li><strong>Timestamp Toggle</strong>: Append millisecond-precise stamps per slot section to ground post-run analysis.</li>
+      </ul>
+
+      <h3>Outputs</h3>
+      <ul>
+        <li><code>html_log</code>: Self-contained HTML string with embedded styles. Drop it into a Save Text node or copy directly to Confluence/Notion.</li>
+        <li>All standard Debug-a-Tron outlets: The console variant prepends the HTML output but otherwise passes through the same cloned payloads.</li>
+      </ul>
+
+      <h3>Deployment Pattern</h3>
+      <ol>
+        <li>Place the console node at the tail of your diagnostic branch.</li>
+        <li>Set desired palette/verbosity. Leave display mode on <em>both</em> for development, flip to <em>html_only</em> when shipping reports.</li>
+        <li>Execute the workflow; the HTML transcript appears immediately. Optional: wire the string into a file writer for automatic archiving.</li>
+      </ol>
+
+      <div class="reminder">Maintainer Marker &mdash; keep the color-scheme dictionary in sync with README screenshots. If a new socket type lands, ensure the HTML renderer recognises it with a colour swatch.</div>
+    </section>
+
+    <section id="utility-nodes">
+      <h2>Utility Nodes</h2>
+      <p>Two lightweight helpers join the toolkit to streamline workflow orchestration and audit trails.</p>
+
+      <h3>h4_SeedBroadcaster</h3>
+      <ul>
+        <li><strong>Inputs</strong>: <em>seed</em> (64-bit int) and <em>mode</em> (<code>fixed</code> or <code>random</code>).</li>
+        <li><strong>Outputs</strong>: Eight identical integer outlets (<code>seed_1</code> &hellip; <code>seed_8</code>) so multiple samplers stay synchronised.</li>
+        <li><strong>Random Mode</strong>: Generates a fresh seed per run (logged via <code>ToolkitLogger</code>); cached so follow-up nodes or Execution Logger can echo the value.</li>
+        <li><strong>Use Case</strong>: Feed The Engine plus standalone KSamplers/ControlNets from a single seed source without copy-paste or string processing.</li>
+      </ul>
+
+      <h3>h4_ExecutionLogger</h3>
+      <ul>
+        <li><strong>Controls</strong>: <em>log_level</em>, custom <em>prefix</em>, <em>show_types</em>, and <em>show_shapes</em> flags to tailor console verbosity.</li>
+        <li><strong>Sockets</strong>: Accepts model, CLIP, VAE, conditioning +/- , latent, image, string, int, and float payloads (all optional).</li>
+        <li><strong>Behaviour</strong>: Emits decorated console lines for each connected slot (type, shape, min/max stats) then returns a plain-text summary suitable for archival.</li>
+        <li><strong>Typical Placement</strong>: Tail-end sentinel for large graphs; combine with the console node for HTML + CLI parity.</li>
+      </ul>
+
+      <div class="reminder">Maintainer Marker &mdash; if a future release adds additional scalar types (e.g., boolean toggles), extend <code>SLOT_DEFINITIONS</code> and the summary formatter in lockstep.</div>
+    </section>
+
     <section id="dependencies">
       <h2>Dependencies &amp; Telemetry</h2>
       <ul>
@@ -549,6 +628,9 @@
   • Helper matrix (_slot_variants, _slot_branch_suffix, _branch_label, _matching_branch_slot) coordinates branch-aware lookups.
   • _collect_latent_snapshots / _tensor_anomalies / _preview_conditioning_tokens feed diagnostics.
 - h4_DebugATronRouter: overrides slot/tooltips/fallback maps with Branch A/B variants, inherits route() implementation, and ships default mode = passthrough.
+- h4_DebugATron3000Console: output-node wrapper that prepends an HTML telemetry stream with palette/verbosity controls.
+- h4_SeedBroadcaster: broadcasts a single fixed or random seed to eight outlets for graph-wide synchronisation.
+- h4_ExecutionLogger: console-mirror output node logging payload metadata and returning a plaintext summary.
 - Export dictionaries (NODE_CLASS_MAPPINGS / DISPLAY / TOOLTIP) register every node with ComfyUI.
 </pre>
 
@@ -563,6 +645,209 @@
       <div class="reminder">
         Maintainer Marker &mdash; after every refactor, refresh these excerpts or link to generated API docs.
       </div>
+    </section>
+
+    <section id="axis-driver">
+      <h2>Axis Driver — Visual Configuration Engine</h2>
+      
+      <h3>Purpose & Architecture</h3>
+      <p>The <strong>h4_AxisDriver</strong> node (v0.6.0) transforms axis configuration from manual string entry into a rich visual interface with model dropdowns, item management, and style controls. When wired to The Engine's <code>axis_x_payload</code>, <code>axis_y_payload</code>, or <code>axis_z_payload</code> inputs, it automatically overrides manual widget settings — no mode matching required.</p>
+
+      <h3>Wiring Diagram: Stupid-Simple Connection</h3>
+      <pre aria-label="Wiring configuration" style="background: rgba(0,255,127,0.08); padding: 1.5rem; border-left: 4px solid #00ff7f;">
+┌─────────────────────────────┐
+│  h4_AxisDriver              │
+│  [X Slot: lora]             │
+│  Items:                     │
+│    ├─ Label: Anime Style    │
+│    ├─ Value: [Dropdown ▼]  │ ──→ anime_v2.safetensors
+│    └─ Strength: 0.8         │
+│                             │
+│  [Y Slot: cfg]              │
+│  Items:                     │
+│    ├─ Label: Low CFG        │ ──→ 2.5
+│    └─ Label: High CFG       │ ──→ 7.5
+│                             │
+│  [Z Slot: none]             │
+└─────────────────────────────┘
+              │
+       Outputs: axis_x, axis_y, axis_z
+              │
+              ▼
+┌─────────────────────────────┐
+│  h4_PlotXY (The Engine)     │
+│                             │
+│  [axis_x_payload] ◀──────── Wire X here (auto-detects preset!)
+│  [axis_y_payload] ◀──────── Wire Y here (auto-detects preset!)
+│  [axis_z_payload] ◀──────── Wire Z here (reserved for 3D)
+│                             │
+│  Manual widgets ignored ✓   │
+└─────────────────────────────┘
+
+✅ NO MANUAL MODE MATCHING REQUIRED!
+✅ Driver is single source of truth
+✅ Change presets in Driver, Engine follows
+✅ Wire X→X, Y→Y, Z→Z — done!
+      </pre>
+
+      <h3>Supported Presets & UI Elements</h3>
+      <table style="width: 100%; border-collapse: collapse; margin: 1rem 0;">
+        <thead style="background: rgba(255,211,0,0.15);">
+          <tr>
+            <th style="padding: 0.5rem; text-align: left;">Preset</th>
+            <th style="padding: 0.5rem; text-align: left;">Input Type</th>
+            <th style="padding: 0.5rem; text-align: left;">Features</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>none</code></td><td>—</td><td>Axis disabled</td></tr>
+          <tr><td><code>prompt</code></td><td>Textarea</td><td>Multi-line prompt variations</td></tr>
+          <tr><td><code>checkpoint</code></td><td><strong>Dropdown</strong></td><td>Model list from ComfyUI API</td></tr>
+          <tr><td><code>lora</code></td><td><strong>Dropdown + Strength</strong></td><td>LoRA selection + 0-2.0 slider</td></tr>
+          <tr><td><code>vae</code></td><td><strong>Dropdown</strong></td><td>VAE model selection</td></tr>
+          <tr><td><code>clip</code></td><td><strong>Dropdown</strong></td><td>CLIP text encoder selection</td></tr>
+          <tr><td><code>clip_vision</code></td><td><strong>Dropdown</strong></td><td>CLIP vision model selection</td></tr>
+          <tr><td><code>sampler</code></td><td>Dropdown</td><td>Built-in sampler list</td></tr>
+          <tr><td><code>scheduler</code></td><td>Dropdown</td><td>Built-in scheduler list</td></tr>
+          <tr><td><code>cfg</code></td><td>Number (0.1 step)</td><td>CFG scale sweep</td></tr>
+          <tr><td><code>steps</code></td><td>Number (integer)</td><td>Step count tests</td></tr>
+          <tr><td><code>denoise</code></td><td>Number (0-1)</td><td>Denoise strength</td></tr>
+          <tr><td><code>seed</code></td><td>Number (integer)</td><td>Seed variations</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Model Discovery System</h3>
+      <p>The Axis Driver fetches models using a multi-endpoint strategy compatible with both <strong>standard ComfyUI</strong> and <strong>Stability Matrix</strong> installations:</p>
+      <ol>
+        <li><code>/object_info/{NodeType}</code> — Primary endpoint, queries ComfyUI's native node definitions</li>
+        <li><code>/api/assets/{kind}</code> — Custom API fallback</li>
+        <li><code>/api/list?type={kind}</code> — Alternative list endpoint</li>
+        <li><code>/api/models/{kind}</code> — Additional fallback</li>
+      </ol>
+      <p><strong>Asset Kind Mapping:</strong></p>
+      <ul>
+        <li><code>checkpoint</code> → CheckpointLoaderSimple node</li>
+        <li><code>lora</code> → LoraLoader node</li>
+        <li><code>vae</code> → VAELoader node</li>
+        <li><code>clip</code> → CLIPLoader node</li>
+        <li><code>clip_vision</code> → CLIPVisionLoader node</li>
+      </ul>
+      <p>Models are cached per session, sorted alphabetically, and include all subfolders. Custom values not in the list are preserved with "(custom)" labels.</p>
+
+      <h3>Critical Fixes & Debugging History</h3>
+      <div style="background: rgba(255,0,0,0.08); border-left: 4px solid #ff3366; padding: 1rem; margin: 1rem 0;">
+        <h4>🚨 Node Sizing Catastrophe (October 2025)</h4>
+        <p><strong>Symptoms:</strong></p>
+        <ul>
+          <li>Node exploded to massive size (90% of canvas) on ANY interaction</li>
+          <li>Zoom triggered infinite growth loops</li>
+          <li>Manual resize caused instant expansion ("shoots out like a bat out of hell")</li>
+          <li>Button clicks continuously enlarged the node</li>
+          <li>Node never shrank back to normal size</li>
+        </ul>
+        
+        <p><strong>Root Causes Identified:</strong></p>
+        <ol>
+          <li><strong>Feedback Loop Trinity:</strong>
+            <ul>
+              <li>ResizeObserver watching DOM → triggered on size changes</li>
+              <li>MutationObserver watching attributes → fired on every style change</li>
+              <li>Auto-sizing logic → measured, calculated, resized → triggered observers → repeat</li>
+            </ul>
+          </li>
+          <li><strong>Math.ceil() Rounding:</strong> Every pixel→graph unit conversion rounded UP, preventing shrinkage</li>
+          <li><strong>Math.max() Chains:</strong> Nested max() calls with multiple sources only allowed growth</li>
+          <li><strong>computeSize() Hijacking:</strong> Custom compute function measured DOM and applied calculations during ComfyUI's resize operations</li>
+          <li><strong>Manual Size Interference:</strong> Stored manual sizes fought with auto-adjustments</li>
+        </ol>
+
+        <p><strong>Solution Strategy:</strong></p>
+        <ol>
+          <li><strong>Disabled ALL Auto-Sizing:</strong>
+            <ul>
+              <li>Removed ResizeObserver completely</li>
+              <li>Removed window resize handler</li>
+              <li>Gutted MutationObserver (now disabled)</li>
+              <li>Emptied performAdjust() function</li>
+            </ul>
+          </li>
+          <li><strong>Neutered Custom Handlers:</strong>
+            <ul>
+              <li><code>node.onResize</code> → pass-through only, no custom logic</li>
+              <li><code>node.computeSize</code> → pass-through to original, no measurements</li>
+              <li><code>h4AxisDriverAutoSize.compute()</code> → returns input values unchanged</li>
+            </ul>
+          </li>
+          <li><strong>Fixed Sizing Behavior:</strong>
+            <ul>
+              <li>Node starts at default size (560×580)</li>
+              <li>Manual resize works via standard ComfyUI mechanics</li>
+              <li>Content scrolls internally if needed</li>
+              <li>No automatic reactions to any interactions</li>
+            </ul>
+          </li>
+        </ol>
+
+        <p><strong>Code Changes:</strong></p>
+        <pre style="background: rgba(0,0,0,0.5); padding: 1rem; overflow-x: auto;">// BEFORE (broken):
+node.computeSize = function(arg1, arg2) {
+    const measurements = measurePixels();
+    const [graphWidth, graphHeight] = convertPixelsToGraphUnits(...);
+    return [Math.max(baseWidth, graphWidth), Math.max(baseHeight, graphHeight)];
+};
+
+// AFTER (fixed):
+node.computeSize = function(arg1, arg2) {
+    if (originalComputeSize) {
+        return originalComputeSize.apply(this, arguments);
+    }
+    return [
+        Number.isFinite(arg1) ? arg1 : DEFAULT_MIN_WIDTH,
+        Number.isFinite(arg2) ? arg2 : DEFAULT_MIN_HEIGHT
+    ];
+};
+        </pre>
+
+        <p><strong>Lessons Learned:</strong></p>
+        <ul>
+          <li>❌ <strong>Never</strong> override ComfyUI's core sizing without complete understanding</li>
+          <li>❌ <strong>Never</strong> use Math.ceil() for bidirectional size adjustments</li>
+          <li>❌ <strong>Never</strong> create observer loops that trigger size calculations</li>
+          <li>✅ <strong>Always</strong> default to vanilla ComfyUI behavior for node sizing</li>
+          <li>✅ <strong>Always</strong> test zoom, manual resize, and button interactions separately</li>
+          <li>✅ <strong>Always</strong> provide escape hatches to disable auto-sizing</li>
+        </ul>
+
+        <p><strong>Current Status:</strong> ✅ <span style="color: #00ff88;">STABLE</span> — Node uses standard ComfyUI sizing, manual resize works perfectly, no growth loops.</p>
+      </div>
+
+      <h3>UI Component Architecture</h3>
+      <ul>
+        <li><strong>Axis Stack:</strong> Three collapsible cards (X, Y, Z) with preset dropdowns and item management</li>
+        <li><strong>Item Rows:</strong> Dynamic creation/deletion with label input, value selector, and remove button</li>
+        <li><strong>Model Dropdowns:</strong> Asynchronously loaded, alphabetically sorted, with custom value support</li>
+        <li><strong>Style Panel:</strong> Collapsible configuration for grid label appearance (font, color, positioning)</li>
+        <li><strong>JSON Toggle:</strong> Shows/hides raw configuration for debugging and manual editing</li>
+        <li><strong>State Management:</strong> JSON-based with automatic serialization to hidden widget</li>
+      </ul>
+
+      <h3>Label Layout Modes</h3>
+      <p>The style payload now carries a <code>label_layout</code> field that controls how The Engine annotates its composite grid:</p>
+      <ul>
+        <li><strong>overlay</strong> &mdash; Original behaviour. Labels sit inside each tile with translucent backplates so the art remains visible.</li>
+        <li><strong>border</strong> &mdash; Enlarges the canvas, painting column headers along the top and row headers along the left border. Perfect for presentation exports where pixels must remain untouched.</li>
+        <li><strong>none</strong> &mdash; Suppresses all annotation so downstream tooling or manual markup can handle captions.</li>
+      </ul>
+      <p>Axis Driver outputs always embed the style selection. When absent, The Engine falls back to its Python default (<code>overlay</code>) to keep legacy workflows stable.</p>
+
+      <h3>Best Practices</h3>
+      <ol>
+        <li><strong>One Driver Per Axis:</strong> Create separate Axis Driver nodes for X, Y, and Z</li>
+        <li><strong>Preset Matching:</strong> Always match Engine axis_mode to Driver preset</li>
+        <li><strong>Incremental Testing:</strong> Start with 2-3 items, expand gradually</li>
+        <li><strong>Descriptive Labels:</strong> Labels appear in grid annotations, make them meaningful</li>
+        <li><strong>Manual Sizing:</strong> Drag corners to preferred size, it will persist</li>
+      </ol>
     </section>
 
     <section id="roadmap">
@@ -590,6 +875,195 @@
       </ul>
     </section>
 
+    <section id="tips-best-practices">
+      <h2>Tips & Best Practices</h2>
+      
+      <h3>🎯 Seed Behavior — Critical Understanding</h3>
+      <div style="background: rgba(255,100,100,0.15); border-left: 4px solid #ff6464; padding: 1rem; margin: 1rem 0;">
+        <p><strong>CRITICAL:</strong> The Engine's seed control mode affects <strong>every grid cell</strong> differently!</p>
+        <table style="width: 100%; margin-top: 0.5rem;">
+          <tr style="background: rgba(255,211,0,0.1);">
+            <td style="padding: 0.5rem;"><code>fixed</code></td>
+            <td style="padding: 0.5rem;">Same seed for ALL cells → ✅ <strong>Use for img2img/high-res fix</strong></td>
+          </tr>
+          <tr>
+            <td style="padding: 0.5rem;"><code>increment</code></td>
+            <td style="padding: 0.5rem;">Seed +1 per cell → Controlled variation</td>
+          </tr>
+          <tr>
+            <td style="padding: 0.5rem;"><code>randomize</code></td>
+            <td style="padding: 0.5rem;">Random seed per cell → ⚠️ <strong>txt2img only!</strong></td>
+          </tr>
+        </table>
+      </div>
+
+      <p><strong>Common Mistake:</strong> Using <code>randomize</code> with img2img + denoise 0.55 still produces <strong>completely different images</strong> because each cell gets a different seed! The denoise value is ignored when the seed changes dramatically.</p>
+      
+      <p><strong>Solution for img2img workflows:</strong></p>
+      <ol>
+        <li>Set Engine seed mode to <code>fixed</code></li>
+        <li>Match the seed from your input image generation</li>
+        <li>Now denoise works correctly: 0.55 denoise = 45% original structure + 55% variation</li>
+      </ol>
+
+      <h3>🎚️ Denoise Value Guide</h3>
+      <table style="width: 100%; margin: 1rem 0;">
+        <tr style="background: rgba(255,211,0,0.08);">
+          <th style="padding: 0.5rem; text-align: left;">Range</th>
+          <th style="padding: 0.5rem; text-align: left;">Effect</th>
+          <th style="padding: 0.5rem; text-align: left;">Use Case</th>
+        </tr>
+        <tr>
+          <td style="padding: 0.5rem;"><code>0.0 - 0.3</code></td>
+          <td style="padding: 0.5rem;">Minimal changes</td>
+          <td style="padding: 0.5rem;">Final polish, style transfer</td>
+        </tr>
+        <tr style="background: rgba(0,255,127,0.08);">
+          <td style="padding: 0.5rem;"><code>0.4 - 0.7</code></td>
+          <td style="padding: 0.5rem;"><strong>Sweet spot</strong></td>
+          <td style="padding: 0.5rem;">✅ img2img / high-res fix (balanced variation)</td>
+        </tr>
+        <tr>
+          <td style="padding: 0.5rem;"><code>0.8 - 0.95</code></td>
+          <td style="padding: 0.5rem;">Major changes</td>
+          <td style="padding: 0.5rem;">Creative reinterpretation</td>
+        </tr>
+        <tr>
+          <td style="padding: 0.5rem;"><code>1.0</code></td>
+          <td style="padding: 0.5rem;">Complete regeneration</td>
+          <td style="padding: 0.5rem;">txt2img from scratch</td>
+        </tr>
+      </table>
+
+      <h3>🔌 Wiring Best Practices</h3>
+      <pre style="background: rgba(0,255,127,0.08); padding: 1rem; border-left: 4px solid #00ff7f;">
+<strong>✅ CORRECT Driver → Engine Wiring:</strong>
+  Driver.axis_x → Engine.axis_x_payload
+  Driver.axis_y → Engine.axis_y_payload  
+  Driver.axis_z → Engine.axis_z_payload
+
+<strong>❌ WRONG:</strong>
+  Driver.axis_x → Engine.x_axis_values (string input)
+  Mixing Driver outputs with manual mode dropdowns
+      </pre>
+
+      <h3>📊 Grid Composition Strategy</h3>
+      <ul>
+        <li><strong>X Axis (columns):</strong> Parameters you want to compare side-by-side (samplers, LoRAs)</li>
+        <li><strong>Y Axis (rows):</strong> Parameters that define categories (CFG values, prompts)</li>
+        <li><strong>Z Axis:</strong> Reserved for future 3D grid support</li>
+      </ul>
+
+      <p><strong>Grid Size Recommendations:</strong></p>
+      <ul>
+        <li><code>2×2 to 4×4</code>: Fast iteration, broad testing</li>
+        <li><code>5×5 to 6×6</code>: Balanced detail vs time</li>
+        <li><code>8×8+</code>: Comprehensive testing (WARNING: slow, high VRAM)</li>
+      </ul>
+
+      <p style="background: rgba(255,211,0,0.15); padding: 0.75rem; border-radius: 4px;">
+        <strong>Memory Formula:</strong> Rows × Columns × Model Size × Steps<br>
+        <code>Example: 6×6 grid = 36 images generated!</code>
+      </p>
+
+      <h3>🖼️ Latent Input Workflows</h3>
+      <p><strong>Three strategies for providing input to The Engine:</strong></p>
+
+      <ol>
+        <li>
+          <strong>Empty Latent (txt2img):</strong>
+          <pre style="background: rgba(21,25,46,0.5); padding: 0.75rem; margin-top: 0.5rem;">EmptyLatentImage → Engine.latent_in
+Result: Fresh generation at Engine's width/height</pre>
+        </li>
+
+        <li>
+          <strong>Image Input (img2img):</strong>
+          <pre style="background: rgba(21,25,46,0.5); padding: 0.75rem; margin-top: 0.5rem;">LoadImage → Engine.image_in
+Result: Engine encodes to latent, then refines</pre>
+        </li>
+
+        <li>
+          <strong>Latent Input (high-res fix):</strong>
+          <pre style="background: rgba(21,25,46,0.5); padding: 0.75rem; margin-top: 0.5rem;">KSampler → LatentUpscale → Engine.latent_in
+Result: Engine uses latent directly (no encoding)</pre>
+        </li>
+      </ol>
+
+      <div style="background: rgba(255,100,100,0.15); border-left: 4px solid #ff6464; padding: 1rem; margin: 1rem 0;">
+        <strong>⚠️ IMPORTANT:</strong> When using latent/image input with denoise &lt; 1.0, <strong>ALWAYS use <code>fixed</code> seed mode</strong> to preserve the base image structure!
+      </div>
+
+      <h3>🎨 Model Dropdown Tips</h3>
+      <p><strong>Checkpoint Selection:</strong></p>
+      <ul>
+        <li><code>&lt;none&gt;</code> — Error (checkpoint required unless model input wired)</li>
+        <li>Select actual model from dropdown to load</li>
+      </ul>
+
+      <p><strong>VAE/CLIP Selection:</strong></p>
+      <ul>
+        <li><code>&lt;none&gt;</code> — Disabled (may cause errors if required downstream)</li>
+        <li><code>&lt;checkpoint&gt;</code> — ✅ <strong>Default</strong> — Uses the component from loaded checkpoint</li>
+        <li>Specific models — Override with custom VAE/CLIP</li>
+      </ul>
+
+      <p><strong>LoRA Strength Guidelines:</strong></p>
+      <ul>
+        <li><code>0.0</code> — LoRA disabled (loaded but no effect)</li>
+        <li><code>0.5</code> — Subtle influence</li>
+        <li><code>0.75</code> — ✅ <strong>Default</strong> — Balanced</li>
+        <li><code>1.0</code> — Full strength</li>
+        <li><code>1.5 - 2.0</code> — Exaggerated (may cause artifacts)</li>
+      </ul>
+
+      <h3>⚡ Performance Optimization</h3>
+      <p><strong>Memory Management:</strong></p>
+      <ul>
+        <li>Use <code>bypass_engine: true</code> to test wiring without generation</li>
+        <li>Start with small grids (2×3) before scaling up</li>
+        <li>Engine auto-clears CUDA cache between cells</li>
+        <li>Close other GPU applications before large grid runs</li>
+      </ul>
+
+      <p><strong>Speed Tips:</strong></p>
+      <ul>
+        <li>Lower steps for iteration (20 vs 40)</li>
+        <li>Use faster samplers for testing (euler, euler_ancestral)</li>
+        <li>Disable Debug-a-Tron preview generation during batch runs</li>
+        <li>Use denoise &lt; 1.0 with latent input for faster refinement</li>
+      </ul>
+
+      <h3>💡 Common Workflows</h3>
+      
+      <p><strong>1. Sampler Comparison:</strong></p>
+      <pre style="background: rgba(21,25,46,0.5); padding: 0.75rem;">X Axis: sampler (euler, dpmpp_2m_sde, dpmpp_2m, uni_pc)
+Y Axis: cfg (4.0, 6.0, 8.0)
+Result: 4×3 grid = 12 images testing sampler×CFG</pre>
+
+      <p><strong>2. LoRA Testing:</strong></p>
+      <pre style="background: rgba(21,25,46,0.5); padding: 0.75rem;">X Axis: lora (LoRA A @ 0.75, LoRA B @ 0.75, LoRA C @ 1.0)
+Y Axis: prompt ("anime style", "realistic", "painterly")
+Result: 3×3 grid = 9 images testing LoRA×style</pre>
+
+      <p><strong>3. High-Res Fix Grid:</strong></p>
+      <pre style="background: rgba(21,25,46,0.5); padding: 0.75rem;">Initial Generation:
+  KSampler (steps: 40, cfg: 7, denoise: 1.0, seed: 8008135)
+  ↓
+Upscale:
+  LatentUpscale (2x)
+  ↓
+Refinement Grid:
+  Engine (seed: 8008135 FIXED, denoise: 0.55)
+  X Axis: sampler (test refinement samplers)
+  Y Axis: cfg (find optimal refinement CFG)</pre>
+
+      <p><strong>4. A/B Model Testing:</strong></p>
+      <pre style="background: rgba(21,25,46,0.5); padding: 0.75rem;">X Axis: checkpoint (modelA.safetensors, modelB.safetensors)
+Y Axis: prompt (various test prompts)
+Result: Compare model interpretations</pre>
+
+    </section>
+
     <section id="final-product">
       <h2>Final Product Briefing</h2>
       <p>The h4 Toolkit now ships as a cohesive triad: a battle-tested sampler engine, a clairvoyant debugging suite, and a UI companion that keeps controls ergonomic. This section articulates every feature and function in their final form.</p>
@@ -597,9 +1071,10 @@
       <h3>End-to-End Overview</h3>
       <ul>
         <li><strong>h4_PlotXY</strong> drives plan creation, model/LoRA orchestration, latent preparation, sampler invocation, preview publication, and tiled grid rendering.</li>
+        <li><strong>h4_AxisDriver</strong> provides visual axis configuration with model dropdowns, preset management, and direct-wire structured payloads that automatically configure The Engine (stupid-simple X→X, Y→Y, Z→Z wiring).</li>
         <li><strong>h4_DebugATron3000</strong> mirrors inbound payloads, emits forensic logging, and powers the Go Plus Ultra diagnostics console.</li>
         <li><strong>h4_DebugATronRouter</strong> extends the debugger to dual-branch graphs, maintaining passthrough fidelity while generating branch-specific insights.</li>
-        <li><strong>h4_ui.js</strong> binds the suite together with dynamic sockets, placeholders, tooltip copy, Go Ultra widget choreography, and orientation controls.</li>
+        <li><strong>h4_ui.js</strong> binds the suite together with dynamic sockets, placeholders, tooltip copy, Go Ultra widget choreography, orientation controls, and Axis Driver UI.</li>
       </ul>
 
       <h3>Function-by-Function Detail &mdash; <code>h4_Plot/nodes.py</code></h3>
@@ -608,17 +1083,21 @@
         <li><strong>Compatibility shim</strong> (<code>_invoke_sampler_with_compatibility</code>): interrogates sampler signatures, remaps/drops kwargs, retries with raw kwargs when required parameters remain missing.</li>
         <li><strong>Sigma coordinator</strong> (<code>calculate_sigmas</code> + metadata extracted via <code>_extract_model_sampling</code>): ensures samplers receive the tensors and model sampling profile they now mandate.</li>
         <li><strong>Engine pipeline</strong> (<code>h4_PlotXY.run_pipeline</code>): constructs AxisDescriptor plans, resolves checkpoints/LoRAs, clones or spawns latents, runs samplers, decodes previews, annotates grids, returns stacked tensors plus grid.</li>
+        <li><strong>Axis Driver</strong> (<code>h4_AxisDriver</code>): Visual axis configuration with model dropdowns, preset management, and direct-wire structured payloads that automatically configure The Engine's axis modes (no manual matching required).</li>
         <li><strong>Preview publishers</strong> (<code>_get_preview_handlers</code>, <code>_render_preview_tuple</code>): pick best-available decode/publish hooks, gracefully degrade when <code>latent_preview</code> is absent.</li>
         <li><strong>Diagnostics infrastructure</strong>: <code>ToolkitLogger</code> (colour logging), <code>_summarise_tensor</code>/<code>_tensor_stats</code>/<code>_summarise_object</code> describe payloads; <code>_clone_payload_safely</code> safeguards passthrough cloning.</li>
         <li><strong>Debug base class</strong> (<code>h4_DebugATron3000</code>): metadata-driven <code>INPUT_TYPES()</code>, branch-aware helpers, VAE fallback extraction, watch-expression evaluation, latent snapshotter, anomaly detection, preview/JSON writers.</li>
         <li><strong>Router subclass</strong> (<code>h4_DebugATronRouter</code>): inherits route logic, overrides metadata with Branch A/B definitions, exposes passthrough-by-default mode, and realigns fallbacks on a per-branch basis.</li>
-        <li><strong>Exports</strong> (<code>NODE_CLASS_MAPPINGS</code>, <code>NODE_DISPLAY_NAME_MAPPINGS</code>, <code>NODE_TOOLTIP_MAPPINGS</code>): publish the trio to ComfyUI with descriptive names and tooltip dictionaries.</li>
+        <li><strong>Exports</strong> (<code>NODE_CLASS_MAPPINGS</code>, <code>NODE_DISPLAY_NAME_MAPPINGS</code>, <code>NODE_TOOLTIP_MAPPINGS</code>): publish the quartet to ComfyUI with descriptive names and tooltip dictionaries.</li>
       </ul>
 
       <h3>Function-by-Function Detail &mdash; <code>h4_Plot/js/h4_ui.js</code></h3>
       <ul>
         <li><strong>Placeholder/tooltip suite</strong>: <code>applyPlaceholder</code>, <code>applySliderTooltip</code>, and <code>TOOLTIP_COPY</code> ensure every widget explains itself.</li>
         <li><strong>Go Ultra choreography</strong>: <code>ensureUltraWidgetCache</code>, <code>toggleUltraWidgets</code>, and <code>applyUltraWidgetLabels</code> physically remove advanced widgets when disabled, restore them in order when re-enabled, and keep heights consistent.</li>
+        <li><strong>Axis Driver UI</strong>: Complete visual configuration system with model dropdowns, item management, style panel, JSON toggle, and automatic asset fetching via multi-endpoint strategy.</li>
+        <li><strong>Asset Discovery</strong>: <code>fetchAssetList</code>, <code>loadAssetKinds</code> query ComfyUI's native APIs and Stability Matrix endpoints, caching models per session with fallback chain.</li>
+        <li><strong>Sizing System (DISABLED)</strong>: All auto-sizing logic neutered to prevent feedback loops. Node uses standard ComfyUI sizing only.</li>
         <li><strong>Orientation control</strong>: <code>applyOrientationLayout</code> and the accompanying widget callback flip nodes between horizontal/vertical modes without manual resizing.</li>
         <li><strong>Dynamic socket brain</strong>: <code>ensureDynamicSockets</code>, <code>handleDynamicConnectionChange</code>, and <code>updateDynamicSocketLabels</code> maintain eight wildcard I/O lanes, auto-labelling based on linked socket types.</li>
         <li><strong>Extension entrypoint</strong>: the registered ComfyUI extension hooks node creation/connection events to apply all polish automatically.</li>
