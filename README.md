@@ -919,14 +919,6 @@ If issues persist, gather console logs (the toolkit prints namespace-prefixed en
 
 ---
 
-## Release Intel & Versioning
-
-- Update `TOOLKIT_VERSION`, `PLOT_NODE_VERSION`, and `DEBUG_NODE_VERSION` in `h4_Plot/nodes.py` when shipping releases.
-- Document major changes inside `h4_Plot/docs/h4_toolkit_brief.html` (already acts as the canonical change log and architecture brief).
-- Consider tagging Git releases aligned with version constants for traceability.
-
----
-
 ## Appendix: Function Index
 
 | Module | Key Functions/Classes | Summary |
@@ -934,7 +926,5 @@ If issues persist, gather console logs (the toolkit prints namespace-prefixed en
 | `h4_Plot/nodes.py` | `h4_PlotXY`, `h4_DebugATron3000`, `h4_DebugATronRouter`, `_invoke_sampler_with_compatibility`, `_collect_latent_snapshots`, `_tensor_anomalies`, etc. | Core logic for sampling, diagnostics, and metadata-driven routing. |
 | `h4_Plot/js/h4_ui.js` | `toggleUltraWidgets`, `ensureDynamicSockets`, `applyOrientationLayout`, extension registration | UI/UX companion for nodes. |
 | `h4_Plot/__init__.py` | `ensure_dependencies`, status banner, node exports | Dependency bootstrap and ComfyUI integration. |
-
-| `h4_Plot/docs/h4_toolkit_brief.html` | HTML dossier | Narrative architecture and remediation history. |
 
 
