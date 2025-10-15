@@ -25,7 +25,6 @@
 10. [Development Notes](#development-notes)
 11. [Release Intel & Versioning](#release-intel--versioning)
 12. [Appendix: Function Index](#appendix-function-index)
-13. [License](#license)
 
 ---
 
@@ -937,4 +936,5 @@ If issues persist, gather console logs (the toolkit prints namespace-prefixed en
 | `h4_Plot/__init__.py` | `ensure_dependencies`, status banner, node exports | Dependency bootstrap and ComfyUI integration. |
 
 | `h4_Plot/docs/h4_toolkit_brief.html` | HTML dossier | Narrative architecture and remediation history. |
+
 
