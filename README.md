@@ -14,10 +14,10 @@
 	2. [Axis Driver — `h4_AxisDriver`](#axis-driver--h4_axisdriver)
 	3. [Debug-a-Tron 3000 — `h4_DebugATron3000`](#debug-a-tron-3000--h4_debugatron3000)
 	4. [Debug-a-Tron Router — `h4_DebugATronRouter`](#debug-a-tron-router--h4_debugatronrouter)
-  5. [Debug Console — `h4_DebugATron3000Console`](#debug-console--h4_debugatron3000console)
-  6. [Seed Broadcaster — `h4_SeedBroadcaster`](#seed-broadcaster--h4_seedbroadcaster)
-  7. [The Varianator — `h4_Varianator`](#the-varianator--h4_varianator)
-  8. [Execution Logger — `h4_ExecutionLogger`](#execution-logger--h4_executionlogger)
+    5. [Debug Console — `h4_DebugATron3000Console`](#debug-console--h4_debugatron3000console)
+    6. [Seed Broadcaster — `h4_SeedBroadcaster`](#seed-broadcaster--h4_seedbroadcaster)
+    7. [The Varianator — `h4_Varianator`](#the-varianator--h4_varianator)
+    8. [Execution Logger — `h4_ExecutionLogger`](#execution-logger--h4_executionlogger)
 5. [Go Plus Ultra Diagnostics](#go-plus-ultra-diagnostics)
 6. [UI Companion (`js/h4_ui.js`)](#ui-companion-jsh4_uijs)
 7. [Tips & Best Practices](#tips--best-practices)
@@ -1044,4 +1044,5 @@ If issues persist, gather console logs (the toolkit prints namespace-prefixed en
 | `h4_Plot/nodes.py` | `h4_PlotXY`, `h4_DebugATron3000`, `h4_DebugATronRouter`, `_invoke_sampler_with_compatibility`, `_collect_latent_snapshots`, `_tensor_anomalies`, etc. | Core logic for sampling, diagnostics, and metadata-driven routing. |
 | `h4_Plot/js/h4_ui.js` | `toggleUltraWidgets`, `ensureDynamicSockets`, `applyOrientationLayout`, extension registration | UI/UX companion for nodes. |
 | `h4_Plot/__init__.py` | `ensure_dependencies`, status banner, node exports | Dependency bootstrap and ComfyUI integration. |
+
 | `h4_Plot/docs/h4_toolkit_brief.html` | HTML dossier | Narrative architecture and remediation history. |
