@@ -1,0 +1,799 @@
+
+[07:19:09] [h4 Toolkit::h4_Engine]  INFO :: Sampling with euler_ancestral + simple, steps=20, cfg=5.50, denoise=0.35
+Requested to load _DeviceAlignedModelProxy
+loaded partially 2166.7596366882326 2166.7590408325195 0
+  0%|          | 0/20 [00:00<?, ?it/s][07:19:14] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] apply_model inbound sigma=tensor[cuda:0]
+[07:19:14] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] time_embed proxy validating payload devices
+[07:19:14] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] label_emb proxy enforcing device alignment on cuda:0
+[07:19:14] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] middle_block[0] hook enforcing device alignment on cuda:0
+[07:19:14] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] middle_block[1] hook enforcing device alignment on cuda:0
+[07:19:14] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] middle_block[2] hook enforcing device alignment on cuda:0
+Requested to load TAESD
+loaded completely 128.0 4.66358757019043 True
+100%|██████████| 20/20 [00:08<00:00,  2.25it/s]
+[07:19:22] [h4 Toolkit::h4_Engine]  INFO :: Executing plan 3/4 :: checkpoint=XL\h4_CuteXL.safetensors | prompt+=masterpiece, ultra-detailed, elaborate details, painstaking attention to detail, intricate details, 8k, uhd, expressive eyes, perfect face, perfect features
+
+solo, 1girl, long black hair, middle part, hair slightly over one eye, blue eyes, white tube top, pink crop top hoodie, unzipped, medium breasts, narrow waist, pierced navel, cute pose, provocative, sexy, alluring, cleavage, braless, sfw, sweat pants, hip hugging sweat pants, pink sweat pants, no panties
+[07:19:22] [h4 Toolkit::h4_Engine]  INFO :: Using supplied latent as base
+[07:19:22] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] installing model proxy for ModelPatcher on cuda:0
+[07:19:22] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] Could not find a suitable target for time_embed proxy installation.
+[07:19:22] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] No label_emb attribute detected for proxy installation.
+[07:19:22] [h4 Toolkit::h4_Engine]  WARN :: Latent payload contains tensors on unexpected device(s): samples:cpu; aligning to cuda:0.
+[07:19:22] [h4 Toolkit::h4_Engine]  WARN :: Positive conditioning contains tensors on unexpected device(s): [0][0]:cpu, [0][1].pooled_output:cpu; aligning to cuda:0.
+[07:19:22] [h4 Toolkit::h4_Engine]  WARN :: Negative conditioning contains tensors on unexpected device(s): [0][0]:cpu, [0][1].pooled_output:cpu; aligning to cuda:0.
+[07:19:23] [h4 Toolkit::h4_Engine]  INFO :: Sampling with euler_ancestral + simple, steps=20, cfg=5.50, denoise=0.35
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Requested to load _DeviceAlignedModelProxy
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+loaded partially 836.9878395080566 836.986701965332 0
+  0%|          | 0/20 [00:00<?, ?it/s][07:19:24] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] apply_model inbound sigma=tensor[cuda:0]
+[07:19:24] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] time_embed proxy validating payload devices
+[07:19:24] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] label_emb proxy enforcing device alignment on cuda:0
+[07:19:24] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] middle_block[0] hook enforcing device alignment on cuda:0
+[07:19:24] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] middle_block[1] hook enforcing device alignment on cuda:0
+[07:19:24] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] middle_block[2] hook enforcing device alignment on cuda:0
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Requested to load TAESD
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+loaded completely 128.0 4.66358757019043 True
+  5%|▌         | 1/20 [00:00<00:17,  1.07it/s]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+ 10%|█         | 2/20 [00:01<00:14,  1.25it/s]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+ 15%|█▌        | 3/20 [00:02<00:12,  1.34it/s]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+ 20%|██        | 4/20 [00:03<00:11,  1.35it/s]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+ 25%|██▌       | 5/20 [00:03<00:10,  1.36it/s]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+ 30%|███       | 6/20 [00:04<00:10,  1.35it/s]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+ 35%|███▌      | 7/20 [00:05<00:09,  1.35it/s]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+ 40%|████      | 8/20 [00:06<00:08,  1.36it/s]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+ 45%|████▌     | 9/20 [00:35<01:48,  9.87s/it]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+ 50%|█████     | 10/20 [00:43<01:31,  9.15s/it]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+ 55%|█████▌    | 11/20 [00:44<00:59,  6.60s/it]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+ 60%|██████    | 12/20 [00:45<00:38,  4.83s/it]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+ 65%|██████▌   | 13/20 [00:45<00:25,  3.61s/it]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+ 70%|███████   | 14/20 [00:46<00:16,  2.79s/it]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+ 75%|███████▌  | 15/20 [00:47<00:11,  2.22s/it]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+ 80%|████████  | 16/20 [00:48<00:07,  1.80s/it]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+ 85%|████████▌ | 17/20 [00:49<00:04,  1.52s/it]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+ 90%|█████████ | 18/20 [00:50<00:02,  1.32s/it]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+ 95%|█████████▌| 19/20 [00:51<00:01,  1.17s/it]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+100%|██████████| 20/20 [00:51<00:00,  2.60s/it]
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+[07:20:17] [h4 Toolkit::h4_Engine]  INFO :: Clearing previous checkpoint from memory
+model weight dtype torch.float16, manual cast: None
+model_type EPS
+Using pytorch attention in VAE
+Using pytorch attention in VAE
+VAE load device: cuda:0, offload device: cpu, dtype: torch.bfloat16
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Requested to load SDXLClipModel
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+loaded completely 9.5367431640625e+25 1560.802734375 True
+CLIP/text encoder model load device: cuda:0, offload device: cpu, current: cuda:0, dtype: torch.float16
+[07:20:35] [h4 Toolkit::h4_Engine]  INFO :: Checkpoint ready: XL\h4_Anime_XL.safetensors
+[07:20:35] [h4 Toolkit::h4_Engine]  INFO :: Executing plan 2/4 :: checkpoint=XL\h4_Anime_XL.safetensors | prompt+=solo, 1girl, long black hair, middle part, hair slightly over one eye, blue eyes, white tube top, pink crop top hoodie, unzipped, medium breasts, narrow waist, pierced navel, cute pose, provocative, sexy, alluring, cleavage, braless, sfw, sweat pants, hip hugging sweat pants, pink sweat pants, no panties
+[07:20:35] [h4 Toolkit::h4_Engine]  INFO :: Using supplied latent as base
+[07:20:35] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] installing model proxy for ModelPatcher on cuda:0
+[07:20:35] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] Could not find a suitable target for time_embed proxy installation.
+[07:20:35] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] No label_emb attribute detected for proxy installation.
+[07:20:35] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] installing model proxy for SDXL on cuda:0
+[07:20:42] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] Found diffusion_model, targeting it for time_embed patch.
+[07:20:42] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] Time embed proxy installed on UNetModel.
+[07:20:42] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] label_emb proxy installed on UNetModel.
+[07:20:42] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] installing model proxy for UNetModel on cuda:0
+[07:20:42] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] Found time_embed on main model, targeting it for patch.
+[07:20:42] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] Time embed proxy was already installed.
+[07:20:42] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] label_emb proxy already active on UNetModel.
+[07:20:42] [h4 Toolkit::h4_Engine]  WARN :: Latent payload contains tensors on unexpected device(s): samples:cpu; aligning to cuda:0.
+[07:20:42] [h4 Toolkit::h4_Engine]  WARN :: Positive conditioning contains tensors on unexpected device(s): [0][0]:cpu, [0][1].pooled_output:cpu; aligning to cuda:0.
+[07:20:42] [h4 Toolkit::h4_Engine]  WARN :: Negative conditioning contains tensors on unexpected device(s): [0][0]:cpu, [0][1].pooled_output:cpu; aligning to cuda:0.
+[07:20:42] [h4 Toolkit::h4_Engine]  INFO :: Sampling with euler_ancestral + simple, steps=20, cfg=5.50, denoise=0.35
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Requested to load _DeviceAlignedModelProxy
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+loaded partially 128.0 127.99988555908203 0
+  0%|          | 0/20 [00:00<?, ?it/s][07:20:44] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] apply_model inbound sigma=tensor[cuda:0]
+[07:20:44] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] time_embed proxy validating payload devices
+[07:20:45] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] label_emb proxy enforcing device alignment on cuda:0
+[07:20:45] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] middle_block[0] hook enforcing device alignment on cuda:0
+[07:20:45] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] middle_block[1] hook enforcing device alignment on cuda:0
+[07:20:45] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] middle_block[2] hook enforcing device alignment on cuda:0
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Requested to load AutoencoderKL
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+loaded partially 128.0 127.99993133544922 0
+  5%|▌         | 1/20 [00:21<06:56, 21.91s/it]Interrupting prompt 5d460481-2261-43df-a5ea-7502f95fed4e
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+loaded partially 128.0 127.99993133544922 0
+  5%|▌         | 1/20 [00:28<08:55, 28.17s/it]
+Processing interrupted
+Prompt executed in 191.52 seconds
+=================================================
+Adding extra search path checkpoints D:\LocalAI\StabilityMatrix\Models\StableDiffusion
+Adding extra search path diffusers D:\LocalAI\StabilityMatrix\Models\Diffusers
+Adding extra search path loras D:\LocalAI\StabilityMatrix\Models\Lora
+Adding extra search path loras D:\LocalAI\StabilityMatrix\Models\LyCORIS
+Adding extra search path clip D:\LocalAI\StabilityMatrix\Models\TextEncoders
+Adding extra search path clip_vision D:\LocalAI\StabilityMatrix\Models\ClipVision
+Adding extra search path embeddings D:\LocalAI\StabilityMatrix\Models\Embeddings
+Adding extra search path vae D:\LocalAI\StabilityMatrix\Models\VAE
+Adding extra search path vae_approx D:\LocalAI\StabilityMatrix\Models\ApproxVAE
+Adding extra search path controlnet D:\LocalAI\StabilityMatrix\Models\ControlNet
+Adding extra search path controlnet D:\LocalAI\StabilityMatrix\Models\T2IAdapter
+Adding extra search path gligen D:\LocalAI\StabilityMatrix\Models\GLIGEN
+Adding extra search path upscale_models D:\LocalAI\StabilityMatrix\Models\ESRGAN
+Adding extra search path upscale_models D:\LocalAI\StabilityMatrix\Models\RealESRGAN
+Adding extra search path upscale_models D:\LocalAI\StabilityMatrix\Models\SwinIR
+Adding extra search path hypernetworks D:\LocalAI\StabilityMatrix\Models\Hypernetwork
+Adding extra search path ipadapter D:\LocalAI\StabilityMatrix\Models\IpAdapter
+Adding extra search path ipadapter D:\LocalAI\StabilityMatrix\Models\IpAdapters15
+Adding extra search path ipadapter D:\LocalAI\StabilityMatrix\Models\IpAdaptersXl
+Adding extra search path prompt_expansion D:\LocalAI\StabilityMatrix\Models\PromptExpansion
+Adding extra search path ultralytics D:\LocalAI\StabilityMatrix\Models\Ultralytics
+Adding extra search path ultralytics_bbox D:\LocalAI\StabilityMatrix\Models\Ultralytics\bbox
+Adding extra search path ultralytics_segm D:\LocalAI\StabilityMatrix\Models\Ultralytics\segm
+Adding extra search path sams D:\LocalAI\StabilityMatrix\Models\Sams
+Adding extra search path diffusion_models D:\LocalAI\StabilityMatrix\Models\DiffusionModels
+[START] Security scan
+[DONE] Security scan
+## ComfyUI-Manager: installing dependencies done.
+** ComfyUI startup time: 2025-10-17 07:07:43.553
+** Platform: Windows
+** Python version: 3.12.11 (main, Jul 23 2025, 00:32:20) [MSC v.1944 64 bit (AMD64)]
+** Python executable: D:\LocalAI\StabilityMatrix\Packages\ComfyUI\venv\Scripts\python.exe
+** ComfyUI Path: D:\LocalAI\StabilityMatrix\Packages\ComfyUI
+** ComfyUI Base Folder Path: D:\LocalAI\StabilityMatrix\Packages\ComfyUI
+** User directory: D:\LocalAI\StabilityMatrix\Packages\ComfyUI\user
+** ComfyUI-Manager config path: D:\LocalAI\StabilityMatrix\Packages\ComfyUI\user\default\ComfyUI-Manager\config.ini
+** Log path: D:\LocalAI\StabilityMatrix\Packages\ComfyUI\user\comfyui.log
+
+Prestartup times for custom nodes:
+   0.0 seconds: D:\LocalAI\StabilityMatrix\Packages\ComfyUI\custom_nodes\rgthree-comfy
+   4.2 seconds: D:\LocalAI\StabilityMatrix\Packages\ComfyUI\custom_nodes\ComfyUI-Manager-main
+
+D:\LocalAI\StabilityMatrix\Packages\ComfyUI\venv\Lib\site-packages\torch\cuda\__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Checkpoint files will always be loaded safely.
+Total VRAM 8188 MB, total RAM 16011 MB
+pytorch version: 2.5.1+cu121
+Set vram state to: NORMAL_VRAM
+Device: cuda:0 NVIDIA GeForce RTX 4060 Laptop GPU : cudaMallocAsync
+Torch version too old to set sdpa backend priority.
+Using pytorch attention
+Python version: 3.12.11 (main, Jul 23 2025, 00:32:20) [MSC v.1944 64 bit (AMD64)]
+ComfyUI version: 0.3.64
+ComfyUI frontend version: 1.27.10
+[Prompt Server] web root: D:\LocalAI\StabilityMatrix\Packages\ComfyUI\venv\Lib\site-packages\comfyui_frontend_package\static
+[Autocomplete-Plus] Checking HuggingFace dataset newtextdoc1111/danbooru-tag-csv for file updates...
+[Autocomplete-Plus] 'Last-Modified' header not found for danbooru_tags.csv at https://huggingface.co/datasets/newtextdoc1111/danbooru-tag-csv/resolve/main/danbooru_tags.csv
+[Autocomplete-Plus] Failed to get remote last modified time for danbooru_tags.csv.
+[Autocomplete-Plus] 'Last-Modified' header not found for danbooru_tags_cooccurrence.csv at https://huggingface.co/datasets/newtextdoc1111/danbooru-tag-csv/resolve/main/danbooru_tags_cooccurrence.csv
+[Autocomplete-Plus] Failed to get remote last modified time for danbooru_tags_cooccurrence.csv.
+[Autocomplete-Plus] Could not update all remote timestamps from HuggingFace. Will try again later.
+[Autocomplete-Plus] Queuing download for danbooru_tags.csv: Invalid timestamp format for danbooru_tags.csv. Forcing download to ensure integrity.
+[Autocomplete-Plus] Attempting to download danbooru_tags.csv from https://huggingface.co/datasets/newtextdoc1111/danbooru-tag-csv/resolve/main/danbooru_tags.csv
+[Autocomplete-Plus] Successfully downloaded and moved danbooru_tags.csv to D:\LocalAI\StabilityMatrix\Packages\ComfyUI\custom_nodes\comfyui-autocomplete-plus\data\danbooru_tags.csv.
+[Autocomplete-Plus] Queuing download for danbooru_tags_cooccurrence.csv: Invalid timestamp format for danbooru_tags_cooccurrence.csv. Forcing download to ensure integrity.
+[Autocomplete-Plus] Attempting to download danbooru_tags_cooccurrence.csv from https://huggingface.co/datasets/newtextdoc1111/danbooru-tag-csv/resolve/main/danbooru_tags_cooccurrence.csv
+[Autocomplete-Plus] Successfully downloaded and moved danbooru_tags_cooccurrence.csv to D:\LocalAI\StabilityMatrix\Packages\ComfyUI\custom_nodes\comfyui-autocomplete-plus\data\danbooru_tags_cooccurrence.csv.
+[Crystools INFO] Crystools version: 1.27.3
+[Crystools INFO] Platform release: 11
+[Crystools INFO] JETSON: Not detected.
+[Crystools INFO] CPU: 13th Gen Intel(R) Core(TM) i9-13900H - Arch: AMD64 - OS: Windows 11
+[Crystools INFO] pynvml (NVIDIA) initialized.
+[Crystools INFO] GPU/s:
+[Crystools INFO] 0) NVIDIA GeForce RTX 4060 Laptop GPU
+[Crystools INFO] NVIDIA Driver: 580.88
+### Loading: ComfyUI-Manager (V3.37)
+[ComfyUI-Manager] network_mode: public
+[ComfyUI-Manager] Since --preview-method is set, ComfyUI-Manager's preview method feature will be ignored.
+### ComfyUI Revision: 4053 [63722199] *DETACHED | Released on '2025-10-08'
+[tinyterraNodes] Loaded
+[ComfyUI-Manager] default cache updated: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/alter-list.json
+[ComfyUI-Manager] default cache updated: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/model-list.json
+[ComfyUI-Manager] default cache updated: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/github-stats.json
+[ComfyUI-Manager] default cache updated: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/extension-node-map.json
+[ComfyUI-Manager] default cache updated: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/custom-node-list.json
+[h4_ToolKit] Update available for numpy: installed 2.3.3, latest 2.3.4
+[h4_ToolKit] Update available for torch: installed 2.5.1+cu121, latest 2.9.0
+[h4_ToolKit] +=================================== h4_ToolKit v1.0.0 ===================================+
+[h4_ToolKit] | Node                                                          | Version | Status | Mark |
+[h4_ToolKit] +---------------------------------------------------------------+---------+--------+------+
+[h4_ToolKit] | h4 : Axis Driver                                              | 0.6.0   | Loaded | ✔    |
+[h4_ToolKit] | h4 : The Engine (Simple Sampler+Plot)                         | 1.3.0   | Loaded | ✔    |
+[h4_ToolKit] | h4 : The Varianator                                           | 1.0.0   | Loaded | ✔    |
+[h4_ToolKit] | h4 : Debug-a-Tron-3000                                        | 2.1.0   | Loaded | ✔    |
+[h4_ToolKit] | h4 : Debug-a-Tron-3000 Router                                 | 2.1.0   | Loaded | ✔    |
+[h4_ToolKit] | h4 : Debug-a-Tron-3000 CONSOLE (v3.0.0) - Now in Technicolor™ | 1.0.0   | Loaded | ✔    |
+[h4_ToolKit] | h4 : Execution Logger (v1.0.0) - Console Mirror               | 1.0.0   | Loaded | ✔    |
+[h4_ToolKit] | h4 : Seed Broadcaster (v1.1.0) - Seed Generator               | 1.0.0   | Loaded | ✔    |
+[h4_ToolKit] +=========================================================================================+
+
+[rgthree-comfy] Loaded 48 extraordinary nodes. 🎉
+
+
+Import times for custom nodes:
+   0.0 seconds: D:\LocalAI\StabilityMatrix\Packages\ComfyUI\custom_nodes\websocket_image_save.py
+   0.0 seconds: D:\LocalAI\StabilityMatrix\Packages\ComfyUI\custom_nodes\comfyui_memory_cleanup
+   0.0 seconds: D:\LocalAI\StabilityMatrix\Packages\ComfyUI\custom_nodes\comfyui-unload-model
+   0.0 seconds: D:\LocalAI\StabilityMatrix\Packages\ComfyUI\custom_nodes\efficiency-nodes-ED
+   0.1 seconds: D:\LocalAI\StabilityMatrix\Packages\ComfyUI\custom_nodes\comfyui_tinyterranodes
+   0.1 seconds: D:\LocalAI\StabilityMatrix\Packages\ComfyUI\custom_nodes\efficiency-nodes-comfyui
+   0.1 seconds: D:\LocalAI\StabilityMatrix\Packages\ComfyUI\custom_nodes\rgthree-comfy
+   0.3 seconds: D:\LocalAI\StabilityMatrix\Packages\ComfyUI\custom_nodes\ComfyUI-Crystools
+   0.4 seconds: D:\LocalAI\StabilityMatrix\Packages\ComfyUI\custom_nodes\ComfyUI-Manager-main
+   0.6 seconds: D:\LocalAI\StabilityMatrix\Packages\ComfyUI\custom_nodes\h4_ToolKit
+   3.2 seconds: D:\LocalAI\StabilityMatrix\Packages\ComfyUI\custom_nodes\comfyui-autocomplete-plus
+
+Context impl SQLiteImpl.
+Will assume non-transactional DDL.
+No target revision found.
+Starting server
+
+To see the GUI go to: http://127.0.0.1:8190
+FETCH ComfyRegistry Data: 5/100
+FETCH ComfyRegistry Data: 10/100
+FETCH ComfyRegistry Data: 15/100
+FETCH ComfyRegistry Data: 20/100
+FETCH ComfyRegistry Data: 25/100
+FETCH ComfyRegistry Data: 30/100
+FETCH ComfyRegistry Data: 35/100
+FETCH ComfyRegistry Data: 40/100
+FETCH ComfyRegistry Data: 45/100
+FETCH ComfyRegistry Data: 50/100
+FETCH ComfyRegistry Data: 55/100
+FETCH ComfyRegistry Data: 60/100
+FETCH ComfyRegistry Data: 65/100
+FETCH ComfyRegistry Data: 70/100
+FETCH ComfyRegistry Data: 75/100
+FETCH ComfyRegistry Data: 80/100
+FETCH ComfyRegistry Data: 85/100
+FETCH ComfyRegistry Data: 90/100
+FETCH ComfyRegistry Data: 95/100
+FETCH ComfyRegistry Data: 100/100
+FETCH ComfyRegistry Data [DONE]
+[ComfyUI-Manager] default cache updated: https://api.comfy.org/nodes
+FETCH DATA from: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/custom-node-list.json [DONE]
+[ComfyUI-Manager] All startup tasks have been completed.
+got prompt
+[07:18:01] [h4 Toolkit::h4_SeedBroadcaster]  INFO :: [Seed Generator] Manual override detected; adopting seed 957091731348827
+[07:18:01] [h4 Toolkit::h4_SeedBroadcaster]  INFO :: [Seed Generator] mode=random auto=off emitted seed 957091731348827
+model weight dtype torch.float16, manual cast: None
+model_type EPS
+Missing VAE keys ['vae_shift']
+VAE load device: cuda:0, offload device: cpu, dtype: torch.bfloat16
+Requested to load SDXLClipModel
+0 models unloaded.
+loaded completely 9.5367431640625e+25 1560.802734375 True
+CLIP/text encoder model load device: cuda:0, offload device: cpu, current: cuda:0, dtype: torch.float16
+loaded diffusion model directly to GPU
+Requested to load SDXL
+loaded completely 9.5367431640625e+25 4897.0483474731445 True
+Requested to load SDXLClipModel
+loaded completely 1718.9900024414062 1560.802734375 True
+[07:18:28] [h4 Toolkit::h4_DebugATron3000]  INFO :: Debug router engaged :: mode=monitor
+[07:18:28] [h4 Toolkit::h4_DebugATron3000]  INFO :: [h4_Debug-a-Tron-3000] :: Model (MODEL) -> ModelPatcher
+[07:18:28] [h4 Toolkit::h4_DebugATron3000]  INFO :: [h4_Debug-a-Tron-3000] :: CLIP (CLIP) -> CLIP
+[07:18:28] [h4 Toolkit::h4_DebugATron3000]  INFO :: [h4_Debug-a-Tron-3000] :: VAE (VAE) -> VAE
+[07:18:28] [h4 Toolkit::h4_DebugATron3000]  INFO :: [h4_Debug-a-Tron-3000] :: Positive (CONDITIONING) -> list[1] first=list[2]
+[07:18:28] [h4 Toolkit::h4_DebugATron3000]  INFO ::     entries=1
+[07:18:28] [h4 Toolkit::h4_DebugATron3000]  INFO ::     [0] primary=shape=(1, 154, 2048) dtype=torch.float32 device=cpu
+[07:18:28] [h4 Toolkit::h4_DebugATron3000]  INFO ::         min=-81.3413 max=87.2755
+[07:18:28] [h4 Toolkit::h4_DebugATron3000]  INFO ::         mean=0.0016 std=0.5756
+[07:18:28] [h4 Toolkit::h4_DebugATron3000]  INFO :: [h4_Debug-a-Tron-3000] :: Negative (CONDITIONING) -> list[1] first=list[2]
+[07:18:28] [h4 Toolkit::h4_DebugATron3000]  INFO ::     entries=1
+[07:18:28] [h4 Toolkit::h4_DebugATron3000]  INFO ::     [0] primary=shape=(1, 77, 2048) dtype=torch.float32 device=cpu
+[07:18:28] [h4 Toolkit::h4_DebugATron3000]  INFO ::         min=-81.3413 max=87.2755
+[07:18:28] [h4 Toolkit::h4_DebugATron3000]  INFO ::         mean=-0.0075 std=0.6098
+[07:18:28] [h4 Toolkit::h4_DebugATron3000]  INFO :: [h4_Debug-a-Tron-3000] :: Latent (LATENT) -> dict[1] keys={{ samples }}
+[07:18:28] [h4 Toolkit::h4_DebugATron3000]  INFO ::     samples: shape=(1, 4, 64, 96) dtype=torch.float32 device=cpu
+[07:18:28] [h4 Toolkit::h4_DebugATron3000]  INFO ::         min=0.0000 max=0.0000
+[07:18:28] [h4 Toolkit::h4_DebugATron3000]  INFO ::         mean=0.0000 std=0.0000
+[07:18:28] [h4 Toolkit::h4_DebugATron3000]  INFO :: Debug router captured 6 input(s)
+[07:18:28] [h4 Toolkit::h4_DebugATron3000]  WARN :: Go_Plus_ULTRA :: Generic conditioning input appears to be missing
+[07:18:28] [h4 Toolkit::h4_DebugATron3000]  INFO :: Go_Plus_ULTRA :: Snapshot[Latent [first]] -> shape=(1, 4, 64, 96) dtype=torch.float32 device=cpu
+Requested to load TAESD
+loaded completely 128.0 4.66358757019043 True
+[07:18:29] [h4 Toolkit::h4_DebugATron3000]  INFO :: Go_Plus_ULTRA :: Saved preview image (Latent [first]) -> D:\LocalAI\StabilityMatrix\Packages\ComfyUI\temp\h4_debugatron_ultra\ultra_preview_latent_in_first_20251017_111829_329205.png
+[07:18:29] [h4 Toolkit::h4_DebugATron3000]  INFO :: Go_Plus_ULTRA :: Snapshot[Latent [last]] -> shape=(1, 4, 64, 96) dtype=torch.float32 device=cpu
+[07:18:29] [h4 Toolkit::h4_DebugATron3000]  INFO :: Go_Plus_ULTRA :: Saved preview image (Latent [last]) -> D:\LocalAI\StabilityMatrix\Packages\ComfyUI\temp\h4_debugatron_ultra\ultra_preview_latent_in_last_20251017_111829_574018.png
+[07:18:29] [h4 Toolkit::h4_DebugATron3000]  INFO :: Go_Plus_ULTRA :: JSON log saved -> D:\LocalAI\StabilityMatrix\Packages\ComfyUI\temp\h4_debugatron_ultra\debugatron_ultra_20251017_111829_590709.json
+[07:18:29] [h4 Toolkit::h4_DebugATron3000]  INFO :: Mode: monitor
+Connections: 6
+Go_Plus_ULTRA: ON
+
+Model (MODEL) -> ModelPatcher
+CLIP (CLIP) -> CLIP
+VAE (VAE) -> VAE
+Positive (CONDITIONING) -> list[1] first=list[2]
+    entries=1
+    [0] primary=shape=(1, 154, 2048) dtype=torch.float32 device=cpu
+        min=-81.3413 max=87.2755
+        mean=0.0016 std=0.5756
+Negative (CONDITIONING) -> list[1] first=list[2]
+    entries=1
+    [0] primary=shape=(1, 77, 2048) dtype=torch.float32 device=cpu
+        min=-81.3413 max=87.2755
+        mean=-0.0075 std=0.6098
+Latent (LATENT) -> dict[1] keys={{ samples }}
+    samples: shape=(1, 4, 64, 96) dtype=torch.float32 device=cpu
+        min=0.0000 max=0.0000
+        mean=0.0000 std=0.0000
+Snapshot[Latent [first]] -> shape=(1, 4, 64, 96) dtype=torch.float32 device=cpu
+Preview[Latent [first]] saved -> D:\LocalAI\StabilityMatrix\Packages\ComfyUI\temp\h4_debugatron_ultra\ultra_preview_latent_in_first_20251017_111829_329205.png
+Snapshot[Latent [last]] -> shape=(1, 4, 64, 96) dtype=torch.float32 device=cpu
+Preview[Latent [last]] saved -> D:\LocalAI\StabilityMatrix\Packages\ComfyUI\temp\h4_debugatron_ultra\ultra_preview_latent_in_last_20251017_111829_574018.png
+JSON log saved -> D:\LocalAI\StabilityMatrix\Packages\ComfyUI\temp\h4_debugatron_ultra\debugatron_ultra_20251017_111829_590709.json
+WARNING: Go_Plus_ULTRA :: Generic conditioning input appears to be missing
+[07:18:29] [h4 Toolkit::h4_DebugATron3000]  INFO :: Debug routing complete
+loaded completely 5067.372101593018 4897.0483474731445 True
+  0%|          | 0/40 [00:00<?, ?it/s]D:\LocalAI\StabilityMatrix\Packages\ComfyUI\venv\Lib\site-packages\torchsde\_brownian\brownian_interval.py:608: UserWarning: Should have tb<=t1 but got tb=14.614643096923828 and t1=14.614643.
+  warnings.warn(f"Should have {tb_name}<=t1 but got {tb_name}={tb} and t1={self._end}.")
+100%|██████████| 40/40 [00:09<00:00,  4.03it/s]
+Requested to load TAESD
+loaded completely 128.0 4.66358757019043 True
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO :: Debug router engaged :: mode=monitor
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO :: [h4_Debug-a-Tron-3000] :: Model (MODEL) -> ModelPatcher
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO :: [h4_Debug-a-Tron-3000] :: CLIP (CLIP) -> CLIP
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO :: [h4_Debug-a-Tron-3000] :: VAE (VAE) -> VAE
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO :: [h4_Debug-a-Tron-3000] :: Positive (CONDITIONING) -> list[1] first=list[2]
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO ::     entries=1
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO ::     [0] primary=shape=(1, 154, 2048) dtype=torch.float32 device=cpu
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO ::         min=-81.3413 max=87.2755
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO ::         mean=0.0016 std=0.5756
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO :: [h4_Debug-a-Tron-3000] :: Negative (CONDITIONING) -> list[1] first=list[2]
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO ::     entries=1
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO ::     [0] primary=shape=(1, 77, 2048) dtype=torch.float32 device=cpu
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO ::         min=-81.3413 max=87.2755
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO ::         mean=-0.0075 std=0.6098
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO :: [h4_Debug-a-Tron-3000] :: Latent (LATENT) -> dict[1] keys={{ samples }}
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO ::     samples: shape=(1, 4, 64, 96) dtype=torch.float32 device=cpu
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO ::         min=-22.5168 max=28.6101
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO ::         mean=-0.3817 std=7.7549
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO :: [h4_Debug-a-Tron-3000] :: Image (IMAGE) -> shape=(1, 512, 768, 3) dtype=torch.float32 device=cpu
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO ::     shape=(1, 512, 768, 3) dtype=torch.float32 device=cpu
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO ::     min=0.0000 max=1.0000
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO ::     mean=0.5239 std=0.3560
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO :: Debug router captured 7 input(s)
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  WARN :: Go_Plus_ULTRA :: Generic conditioning input appears to be missing
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO :: Go_Plus_ULTRA :: Snapshot[Latent [first]] -> shape=(1, 4, 64, 96) dtype=torch.float32 device=cpu
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO :: Go_Plus_ULTRA :: Saved preview image (Latent [first]) -> D:\LocalAI\StabilityMatrix\Packages\ComfyUI\temp\h4_debugatron_ultra\ultra_preview_latent_in_first_20251017_111842_132963.png
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO :: Go_Plus_ULTRA :: Snapshot[Latent [last]] -> shape=(1, 4, 64, 96) dtype=torch.float32 device=cpu
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO :: Go_Plus_ULTRA :: Saved preview image (Latent [last]) -> D:\LocalAI\StabilityMatrix\Packages\ComfyUI\temp\h4_debugatron_ultra\ultra_preview_latent_in_last_20251017_111842_231828.png
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO :: Go_Plus_ULTRA :: JSON log saved -> D:\LocalAI\StabilityMatrix\Packages\ComfyUI\temp\h4_debugatron_ultra\debugatron_ultra_20251017_111842_291236.json
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO :: Mode: monitor
+Connections: 7
+Go_Plus_ULTRA: ON
+
+Model (MODEL) -> ModelPatcher
+CLIP (CLIP) -> CLIP
+VAE (VAE) -> VAE
+Positive (CONDITIONING) -> list[1] first=list[2]
+    entries=1
+    [0] primary=shape=(1, 154, 2048) dtype=torch.float32 device=cpu
+        min=-81.3413 max=87.2755
+        mean=0.0016 std=0.5756
+Negative (CONDITIONING) -> list[1] first=list[2]
+    entries=1
+    [0] primary=shape=(1, 77, 2048) dtype=torch.float32 device=cpu
+        min=-81.3413 max=87.2755
+        mean=-0.0075 std=0.6098
+Latent (LATENT) -> dict[1] keys={{ samples }}
+    samples: shape=(1, 4, 64, 96) dtype=torch.float32 device=cpu
+        min=-22.5168 max=28.6101
+        mean=-0.3817 std=7.7549
+Image (IMAGE) -> shape=(1, 512, 768, 3) dtype=torch.float32 device=cpu
+    shape=(1, 512, 768, 3) dtype=torch.float32 device=cpu
+    min=0.0000 max=1.0000
+    mean=0.5239 std=0.3560
+Snapshot[Latent [first]] -> shape=(1, 4, 64, 96) dtype=torch.float32 device=cpu
+Preview[Latent [first]] saved -> D:\LocalAI\StabilityMatrix\Packages\ComfyUI\temp\h4_debugatron_ultra\ultra_preview_latent_in_first_20251017_111842_132963.png
+Snapshot[Latent [last]] -> shape=(1, 4, 64, 96) dtype=torch.float32 device=cpu
+Preview[Latent [last]] saved -> D:\LocalAI\StabilityMatrix\Packages\ComfyUI\temp\h4_debugatron_ultra\ultra_preview_latent_in_last_20251017_111842_231828.png
+JSON log saved -> D:\LocalAI\StabilityMatrix\Packages\ComfyUI\temp\h4_debugatron_ultra\debugatron_ultra_20251017_111842_291236.json
+WARNING: Go_Plus_ULTRA :: Generic conditioning input appears to be missing
+[07:18:42] [h4 Toolkit::h4_DebugATron3000]  INFO :: Debug routing complete
+[07:18:42] [h4 Toolkit::h4_Engine]  INFO :: Engine pipeline starting
+model weight dtype torch.float16, manual cast: None
+model_type EPS
+Using pytorch attention in VAE
+Using pytorch attention in VAE
+VAE load device: cuda:0, offload device: cpu, dtype: torch.bfloat16
+CLIP/text encoder model load device: cuda:0, offload device: cpu, current: cpu, dtype: torch.float16
+[07:18:44] [h4 Toolkit::h4_Engine]  INFO :: Checkpoint ready: 1.5\dreamshaper_8LCM.safetensors
+[07:18:44] [h4 Toolkit::h4_Engine]  INFO :: Clip skip helper not available in this environment; using checkpoint configuration
+[07:18:45] [h4 Toolkit::h4_Engine]  INFO :: Axis Driver override applied to X axis with 2 item(s)
+[07:18:45] [h4 Toolkit::h4_Engine]  INFO :: Axis Driver override applied to Y axis with 2 item(s)
+[07:18:45] [h4 Toolkit::h4_Engine]  INFO :: Generated 4 execution plan(s)
+[07:18:45] [h4 Toolkit::h4_Engine]  INFO :: Using supplied latent as base
+model weight dtype torch.float16, manual cast: None
+model_type EPS
+Missing VAE keys ['vae_shift']
+VAE load device: cuda:0, offload device: cpu, dtype: torch.bfloat16
+Requested to load SDXLClipModel
+loaded completely 9.5367431640625e+25 1560.802734375 True
+CLIP/text encoder model load device: cuda:0, offload device: cpu, current: cuda:0, dtype: torch.float16
+[07:19:00] [h4 Toolkit::h4_Engine]  INFO :: Checkpoint ready: XL\h4_CuteXL.safetensors
+[07:19:00] [h4 Toolkit::h4_Engine]  INFO :: Executing plan 1/4 :: checkpoint=XL\h4_CuteXL.safetensors | prompt+=solo, 1girl, long black hair, middle part, hair slightly over one eye, blue eyes, white tube top, pink crop top hoodie, unzipped, medium breasts, narrow waist, pierced navel, cute pose, provocative, sexy, alluring, cleavage, braless, sfw, sweat pants, hip hugging sweat pants, pink sweat pants, no panties
+[07:19:00] [h4 Toolkit::h4_Engine]  INFO :: Using supplied latent as base
+[07:19:00] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] installing model proxy for ModelPatcher on cuda:0
+[07:19:00] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] calc_cond_batch timestep coercion installed
+[07:19:00] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] Could not find a suitable target for time_embed proxy installation.
+[07:19:00] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] No label_emb attribute detected for proxy installation.
+[07:19:00] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] installing model proxy for SDXL on cuda:0
+[07:19:08] [h4 Toolkit::h4_Engine]  WARN :: [DeviceCheck] Unable to move SDXL to cuda:0: Allocation on device 
+[07:19:08] [h4 Toolkit::h4_Engine]  WARN :: [DeviceCheck] Unable to move diffusion_model to cuda:0: Allocation on device 
+[07:19:08] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] Found diffusion_model, targeting it for time_embed patch.
+[07:19:08] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] Time embed proxy installed on UNetModel.
+[07:19:08] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] label_emb proxy installed on UNetModel.
+[07:19:08] [h4 Toolkit::h4_Engine]  WARN :: [DeviceCheck] Unable to move output_block[1] to cuda:0: Allocation on device 
+[07:19:08] [h4 Toolkit::h4_Engine]  WARN :: [DeviceCheck] Unable to move output_block[2] to cuda:0: Allocation on device 
+[07:19:08] [h4 Toolkit::h4_Engine]  WARN :: [DeviceCheck] Unable to move output_block[3] to cuda:0: Allocation on device 
+[07:19:08] [h4 Toolkit::h4_Engine]  WARN :: [DeviceCheck] Unable to move output_block[4] to cuda:0: Allocation on device 
+[07:19:08] [h4 Toolkit::h4_Engine]  WARN :: [DeviceCheck] Unable to move output_block[5] to cuda:0: Allocation on device 
+[07:19:08] [h4 Toolkit::h4_Engine]  WARN :: [DeviceCheck] Unable to move output_block[6] to cuda:0: Allocation on device 
+[07:19:08] [h4 Toolkit::h4_Engine]  WARN :: [DeviceCheck] Unable to move output_block[7] to cuda:0: Allocation on device 
+[07:19:08] [h4 Toolkit::h4_Engine]  WARN :: [DeviceCheck] Unable to move output_block[8] to cuda:0: Allocation on device 
+[07:19:08] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] installing model proxy for UNetModel on cuda:0
+[07:19:08] [h4 Toolkit::h4_Engine]  WARN :: [DeviceCheck] Unable to move UNetModel to cuda:0: Allocation on device 
+[07:19:08] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] Found time_embed on main model, targeting it for patch.
+[07:19:08] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] Time embed proxy was already installed.
+[07:19:08] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] label_emb proxy already active on UNetModel.
+[07:19:08] [h4 Toolkit::h4_Engine]  WARN :: [DeviceCheck] Unable to move output_block[1] to cuda:0: Allocation on device 
+[07:19:08] [h4 Toolkit::h4_Engine]  WARN :: [DeviceCheck] Unable to move output_block[2] to cuda:0: Allocation on device 
+[07:19:08] [h4 Toolkit::h4_Engine]  WARN :: [DeviceCheck] Unable to move output_block[3] to cuda:0: Allocation on device 
+[07:19:08] [h4 Toolkit::h4_Engine]  WARN :: [DeviceCheck] Unable to move output_block[4] to cuda:0: Allocation on device 
+[07:19:08] [h4 Toolkit::h4_Engine]  WARN :: [DeviceCheck] Unable to move output_block[5] to cuda:0: Allocation on device 
+[07:19:08] [h4 Toolkit::h4_Engine]  WARN :: [DeviceCheck] Unable to move output_block[6] to cuda:0: Allocation on device 
+[07:19:08] [h4 Toolkit::h4_Engine]  WARN :: [DeviceCheck] Unable to move output_block[7] to cuda:0: Allocation on device 
+[07:19:09] [h4 Toolkit::h4_Engine]  WARN :: [DeviceCheck] Unable to move output_block[8] to cuda:0: Allocation on device 
+[07:19:09] [h4 Toolkit::h4_Engine]  WARN :: Latent payload contains tensors on unexpected device(s): samples:cpu; aligning to cuda:0.
+[07:19:09] [h4 Toolkit::h4_Engine]  WARN :: Positive conditioning contains tensors on unexpected device(s): [0][0]:cpu, [0][1].pooled_output:cpu; aligning to cuda:0.
+[07:19:09] [h4 Toolkit::h4_Engine]  WARN :: Negative conditioning contains tensors on unexpected device(s): [0][0]:cpu, [0][1].pooled_output:cpu; aligning to cuda:0.
+[07:19:09] [h4 Toolkit::h4_Engine]  INFO :: Sampling with euler_ancestral + simple, steps=20, cfg=5.50, denoise=0.35
+Requested to load _DeviceAlignedModelProxy
+loaded partially 2166.7596366882326 2166.7590408325195 0
+  0%|          | 0/20 [00:00<?, ?it/s][07:19:14] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] apply_model inbound sigma=tensor[cuda:0]
+[07:19:14] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] time_embed proxy validating payload devices
+[07:19:14] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] label_emb proxy enforcing device alignment on cuda:0
+[07:19:14] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] middle_block[0] hook enforcing device alignment on cuda:0
+[07:19:14] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] middle_block[1] hook enforcing device alignment on cuda:0
+[07:19:14] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] middle_block[2] hook enforcing device alignment on cuda:0
+Requested to load TAESD
+loaded completely 128.0 4.66358757019043 True
+100%|██████████| 20/20 [00:08<00:00,  2.25it/s]
+[07:19:22] [h4 Toolkit::h4_Engine]  INFO :: Executing plan 3/4 :: checkpoint=XL\h4_CuteXL.safetensors | prompt+=masterpiece, ultra-detailed, elaborate details, painstaking attention to detail, intricate details, 8k, uhd, expressive eyes, perfect face, perfect features
+
+solo, 1girl, long black hair, middle part, hair slightly over one eye, blue eyes, white tube top, pink crop top hoodie, unzipped, medium breasts, narrow waist, pierced navel, cute pose, provocative, sexy, alluring, cleavage, braless, sfw, sweat pants, hip hugging sweat pants, pink sweat pants, no panties
+[07:19:22] [h4 Toolkit::h4_Engine]  INFO :: Using supplied latent as base
+[07:19:22] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] installing model proxy for ModelPatcher on cuda:0
+[07:19:22] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] Could not find a suitable target for time_embed proxy installation.
+[07:19:22] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] No label_emb attribute detected for proxy installation.
+[07:19:22] [h4 Toolkit::h4_Engine]  WARN :: Latent payload contains tensors on unexpected device(s): samples:cpu; aligning to cuda:0.
+[07:19:22] [h4 Toolkit::h4_Engine]  WARN :: Positive conditioning contains tensors on unexpected device(s): [0][0]:cpu, [0][1].pooled_output:cpu; aligning to cuda:0.
+[07:19:22] [h4 Toolkit::h4_Engine]  WARN :: Negative conditioning contains tensors on unexpected device(s): [0][0]:cpu, [0][1].pooled_output:cpu; aligning to cuda:0.
+[07:19:23] [h4 Toolkit::h4_Engine]  INFO :: Sampling with euler_ancestral + simple, steps=20, cfg=5.50, denoise=0.35
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Requested to load _DeviceAlignedModelProxy
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+loaded partially 836.9878395080566 836.986701965332 0
+  0%|          | 0/20 [00:00<?, ?it/s][07:19:24] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] apply_model inbound sigma=tensor[cuda:0]
+[07:19:24] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] time_embed proxy validating payload devices
+[07:19:24] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] label_emb proxy enforcing device alignment on cuda:0
+[07:19:24] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] middle_block[0] hook enforcing device alignment on cuda:0
+[07:19:24] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] middle_block[1] hook enforcing device alignment on cuda:0
+[07:19:24] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] middle_block[2] hook enforcing device alignment on cuda:0
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Requested to load TAESD
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+loaded completely 128.0 4.66358757019043 True
+  5%|▌         | 1/20 [00:00<00:17,  1.07it/s]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+ 10%|█         | 2/20 [00:01<00:14,  1.25it/s]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+ 15%|█▌        | 3/20 [00:02<00:12,  1.34it/s]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+ 20%|██        | 4/20 [00:03<00:11,  1.35it/s]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+ 25%|██▌       | 5/20 [00:03<00:10,  1.36it/s]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+ 30%|███       | 6/20 [00:04<00:10,  1.35it/s]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+ 35%|███▌      | 7/20 [00:05<00:09,  1.35it/s]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+ 40%|████      | 8/20 [00:06<00:08,  1.36it/s]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+ 45%|████▌     | 9/20 [00:35<01:48,  9.87s/it]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+ 50%|█████     | 10/20 [00:43<01:31,  9.15s/it]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+ 55%|█████▌    | 11/20 [00:44<00:59,  6.60s/it]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+ 60%|██████    | 12/20 [00:45<00:38,  4.83s/it]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+ 65%|██████▌   | 13/20 [00:45<00:25,  3.61s/it]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+ 70%|███████   | 14/20 [00:46<00:16,  2.79s/it]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+ 75%|███████▌  | 15/20 [00:47<00:11,  2.22s/it]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+ 80%|████████  | 16/20 [00:48<00:07,  1.80s/it]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+ 85%|████████▌ | 17/20 [00:49<00:04,  1.52s/it]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+ 90%|█████████ | 18/20 [00:50<00:02,  1.32s/it]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+ 95%|█████████▌| 19/20 [00:51<00:01,  1.17s/it]Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+100%|██████████| 20/20 [00:51<00:00,  2.60s/it]
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+[07:20:17] [h4 Toolkit::h4_Engine]  INFO :: Clearing previous checkpoint from memory
+model weight dtype torch.float16, manual cast: None
+model_type EPS
+Using pytorch attention in VAE
+Using pytorch attention in VAE
+VAE load device: cuda:0, offload device: cpu, dtype: torch.bfloat16
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Requested to load SDXLClipModel
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+loaded completely 9.5367431640625e+25 1560.802734375 True
+CLIP/text encoder model load device: cuda:0, offload device: cpu, current: cuda:0, dtype: torch.float16
+[07:20:35] [h4 Toolkit::h4_Engine]  INFO :: Checkpoint ready: XL\h4_Anime_XL.safetensors
+[07:20:35] [h4 Toolkit::h4_Engine]  INFO :: Executing plan 2/4 :: checkpoint=XL\h4_Anime_XL.safetensors | prompt+=solo, 1girl, long black hair, middle part, hair slightly over one eye, blue eyes, white tube top, pink crop top hoodie, unzipped, medium breasts, narrow waist, pierced navel, cute pose, provocative, sexy, alluring, cleavage, braless, sfw, sweat pants, hip hugging sweat pants, pink sweat pants, no panties
+[07:20:35] [h4 Toolkit::h4_Engine]  INFO :: Using supplied latent as base
+[07:20:35] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] installing model proxy for ModelPatcher on cuda:0
+[07:20:35] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] Could not find a suitable target for time_embed proxy installation.
+[07:20:35] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] No label_emb attribute detected for proxy installation.
+[07:20:35] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] installing model proxy for SDXL on cuda:0
+[07:20:42] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] Found diffusion_model, targeting it for time_embed patch.
+[07:20:42] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] Time embed proxy installed on UNetModel.
+[07:20:42] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] label_emb proxy installed on UNetModel.
+[07:20:42] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] installing model proxy for UNetModel on cuda:0
+[07:20:42] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] Found time_embed on main model, targeting it for patch.
+[07:20:42] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] Time embed proxy was already installed.
+[07:20:42] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] label_emb proxy already active on UNetModel.
+[07:20:42] [h4 Toolkit::h4_Engine]  WARN :: Latent payload contains tensors on unexpected device(s): samples:cpu; aligning to cuda:0.
+[07:20:42] [h4 Toolkit::h4_Engine]  WARN :: Positive conditioning contains tensors on unexpected device(s): [0][0]:cpu, [0][1].pooled_output:cpu; aligning to cuda:0.
+[07:20:42] [h4 Toolkit::h4_Engine]  WARN :: Negative conditioning contains tensors on unexpected device(s): [0][0]:cpu, [0][1].pooled_output:cpu; aligning to cuda:0.
+[07:20:42] [h4 Toolkit::h4_Engine]  INFO :: Sampling with euler_ancestral + simple, steps=20, cfg=5.50, denoise=0.35
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Requested to load _DeviceAlignedModelProxy
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+loaded partially 128.0 127.99988555908203 0
+  0%|          | 0/20 [00:00<?, ?it/s][07:20:44] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] apply_model inbound sigma=tensor[cuda:0]
+[07:20:44] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] time_embed proxy validating payload devices
+[07:20:45] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] label_emb proxy enforcing device alignment on cuda:0
+[07:20:45] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] middle_block[0] hook enforcing device alignment on cuda:0
+[07:20:45] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] middle_block[1] hook enforcing device alignment on cuda:0
+[07:20:45] [h4 Toolkit::h4_Engine]  INFO :: [DeviceCheck] middle_block[2] hook enforcing device alignment on cuda:0
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Requested to load AutoencoderKL
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+loaded partially 128.0 127.99993133544922 0
+  5%|▌         | 1/20 [00:21<06:56, 21.91s/it]Interrupting prompt 5d460481-2261-43df-a5ea-7502f95fed4e
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+Potential memory leak detected with model _DeviceAlignedModelProxy, doing a full garbage collect, for maximum performance avoid circular references in the model code.
+WARNING, memory leak with model _DeviceAlignedModelProxy. Please make sure it is not being referenced from somewhere.
+0 models unloaded.
+loaded partially 128.0 127.99993133544922 0
+  5%|▌         | 1/20 [00:28<08:55, 28.17s/it]
+Processing interrupted
+Prompt executed in 191.52 seconds

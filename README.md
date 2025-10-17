@@ -1,6 +1,6 @@
 # h4 Toolkit — Comprehensive Operations Manual
 
-> Hyper-observable, quality-of-life boosts for ComfyUI. This README is the definitive companion for installing, running, and mastering the **h4 Toolkit** nodes. Every control, feature, and internal safeguard is documented below.
+> Hyper-observable, cyberpunk-themed quality-of-life boosts for ComfyUI. This README is the definitive companion for installing, running, and mastering the **h4 Toolkit** nodes. Every control, feature, and internal safeguard is documented below.
 
 ---
 
@@ -14,9 +14,10 @@
 	2. [Axis Driver — `h4_AxisDriver`](#axis-driver--h4_axisdriver)
 	3. [Debug-a-Tron 3000 — `h4_DebugATron3000`](#debug-a-tron-3000--h4_debugatron3000)
 	4. [Debug-a-Tron Router — `h4_DebugATronRouter`](#debug-a-tron-router--h4_debugatronrouter)
-    5. [Debug Console — `h4_DebugATron3000Console`](#debug-console--h4_debugatron3000console)
-    6. [Seed Broadcaster — `h4_SeedBroadcaster`](#seed-broadcaster--h4_seedbroadcaster)
-    7. [Execution Logger — `h4_ExecutionLogger`](#execution-logger--h4_executionlogger)
+  5. [Debug Console — `h4_DebugATron3000Console`](#debug-console--h4_debugatron3000console)
+  6. [Seed Broadcaster — `h4_SeedBroadcaster`](#seed-broadcaster--h4_seedbroadcaster)
+  7. [The Varianator — `h4_Varianator`](#the-varianator--h4_varianator)
+  8. [Execution Logger — `h4_ExecutionLogger`](#execution-logger--h4_executionlogger)
 5. [Go Plus Ultra Diagnostics](#go-plus-ultra-diagnostics)
 6. [UI Companion (`js/h4_ui.js`)](#ui-companion-jsh4_uijs)
 7. [Tips & Best Practices](#tips--best-practices)
@@ -25,6 +26,7 @@
 10. [Development Notes](#development-notes)
 11. [Release Intel & Versioning](#release-intel--versioning)
 12. [Appendix: Function Index](#appendix-function-index)
+13. [License](#license)
 
 ---
 
@@ -47,7 +49,7 @@
 - **Debug-a-Tron Suite** — real-time diagnostics nodes operating in monitor/passthrough modes, capable of deep latent inspection and branch-aware routing.
 - **UI Enhancements** — dynamic sockets, contextual tooltips, orientation controls, and a polished Go Plus Ultra toggle experience.
 - **Debug Console & Logging Utilities** — the `h4_DebugATron3000Console` output-node renders cyberpunk HTML telemetry, while `h4_ExecutionLogger` mirrors activity straight to the ComfyUI log stream.
-- **Workflow Utilities** — the `h4_SeedBroadcaster` fans a single seed across eight outputs, keeping large grids deterministic without manual copy/paste.
+- **Workflow Utilities** — `h4_SeedBroadcaster` keeps samplers in sync with deterministic seed streams, while `h4_Varianator` riffs on existing latents with profile-driven denoise windows, prompt jitter, and optional GO PLUS ULTRA telemetry.
 
 ### October 2025 Recovery Recap
 
@@ -113,26 +115,26 @@ Successful execution (exit code `0`) confirms the nodes file is syntax-tight for
 4. Kick off a run. Watch the ComfyUI console for colour-coded logs describing every stage.
 5. Enable **GO PLUS ULTRA?!** when you need latent snapshots, anomaly detection, previews, JSON reporting, or model fingerprinting.
 6. For dual-branch graphs (e.g., diffuser vs. refiner), insert the **Debug-a-Tron Router** to mirror and audit both branches simultaneously.
-7. Bolt on the **Seed Broadcaster** and **Execution Logger** when orchestrating multi-node grids so every sampler inherits the same seed while the console captures a human-readable audit trail.
+7. Bolt on the **Seed Broadcaster**, **Varianator**, and **Execution Logger** when orchestrating multi-node grids: broadcast a single seed anchor, spin off guided variations (Varianator needs the Engine's `latent` + `model` + `vae` outputs, and the `clip` handle if you want prompt-driven features), and keep a human-readable audit trail in the console.
 
 > **Workflow Pro-Tip:** Start with Debug-a-Tron disabled to validate your graph, then activate GO PLUS ULTRA for targeted forensic passes.
 
 ### Wiring Cheat Sheet
 
 ```
- Axis Driver Triplet                     Core Sampler                     Debug Fan-Out
- ┌────────────────────┐       ┌──────────────────────────┐       ┌──────────────────────────┐
- │ h4_AxisDriver (X) │─┐     │ h4_PlotXY "The Engine"   │─▶ IMG │ h4_DebugATron3000        │─▶ routed payloads
- └────────────────────┘ │     │  axis_x / axis_y / axis_z│─▶ LAT │ h4_DebugATron3000Console │─▶ html_log + mirrors
- ┌────────────────────┐ │     │  prompts / schedulers    │─▶ JSON│ h4_ExecutionLogger       │─▶ log_summary
- │ h4_AxisDriver (Y) │─┼────▶ │  accepts model / latent  │      │ h4_DebugATronRouter      │─▶ dual branches
- └────────────────────┘ │     │  optional legacy widgets │      │ h4_SeedBroadcaster       │─▶ seed_1…8
+ Axis Driver Triplet                     Core Sampler                     Debug Fan-Out                    Seed Sync
+ ┌────────────────────┐       ┌──────────────────────────┐       ┌──────────────────────────┐        ┌────────────────────┐
+ │ h4_AxisDriver (X) │─┐     │ h4_PlotXY "The Engine"   │─▶ IMG │ h4_DebugATron3000        │─▶ …    │ h4_SeedBroadcaster │─▶ seed ➜ connect to every sampler
+ └────────────────────┘ │     │  axis_x / axis_y / axis_z│─▶ LAT │ h4_DebugATron3000Console │─▶ …    └────────────────────┘
+ ┌────────────────────┐ │     │  prompts / schedulers    │─▶ JSON│ h4_ExecutionLogger       │─▶ log  (one output, unlimited links)
+ │ h4_AxisDriver (Y) │─┼────▶ │  accepts model / latent  │      │ h4_DebugATronRouter      │─▶ dual
+ └────────────────────┘ │     │  optional legacy widgets │      │                            
  ┌────────────────────┐ │     └──────────────────────────┘      └──────────────────────────┘
  │ h4_AxisDriver (Z) │─┘
  └────────────────────┘
 ```
 
-Swap any block on the right for your usual sampler or output nodes. The Seed Broadcaster can sit ahead of multiple samplers, while the Execution Logger happily watches whatever you plug into its optional slots.
+Swap any block on the right for your usual sampler/output nodes. The Seed Broadcaster now emits a single seed output you can multi-wire to every sampler that needs to stay in sync, while the Execution Logger happily watches whatever you plug into its optional slots.
 
 ---
 
@@ -537,29 +539,137 @@ Each base inlet/outlet from the console node becomes two slots:
 
 ### Seed Broadcaster — `h4_SeedBroadcaster`
 
-**Purpose:** Deterministic seed fan-out. One inlet, eight identical outlets. Keeps grid experiments and multi-branch samplers in sync without spreadsheet gymnastics.
+**Purpose:** Deterministic seed generator with fixed, increment, or random modes. One output, unlimited fan-out—connect the pin to every sampler that needs to stay synchronized.
 
 ```
- seed source ──▶ h4_SeedBroadcaster ──▶ seed_1 ──▶ sampler A
-                                      ├─▶ seed_2 ──▶ sampler B
-                                      ├─▶ …
-                                      └─▶ seed_8 ──▶ sampler H
+ h4_SeedBroadcaster ──▶ seed output ──▶ sampler A / sampler B / The Engine / …
 ```
 
 #### Controls
 
 | Widget | Description |
 | --- | --- |
-| `seed` | Base integer seed (64-bit safe). |
-| `mode` | `fixed` uses the provided seed each execution; `random` generates a fresh seed per run (logged to console). |
+| `seed` | Anchor value. Used directly in `fixed` mode and as the manual override for other modes. |
+| `mode` | Switch between `fixed`, `increment`, or `random`. |
+| `increment_step` | Amount added whenever increment mode advances. Ignored in other modes. |
+| `auto_advance` | When enabled, the node advances itself every execution (increments or rolls a new random). Disable to hold the current seed until you press **Randomize** or edit the value manually. |
+| `random_digits` | Number of digits (1-12) to use when auto-generating random seeds. |
 
-Outputs `seed_1` through `seed_8`, each carrying the selected seed. Wire different sampler nodes to different outputs when testing large matrices.
+The UI also exposes a **Randomize** button beside the seed field (thanks to the `js/h4_ui.js` helper). Use it to roll a new seed instantly—perfect for `auto_advance = False` workflows.
 
 #### Usage Tips
 
-- Chain the broadcaster ahead of The Engine, KSampler nodes, or any custom module expecting a seed integer.
-- Combine with Execution Logger to verify that every consumer received the same value.
-- In `random` mode the generated seed is cached so you can reference it after the run.
+- Fan the output to as many samplers as you like; ComfyUI lets you multi-wire a single integer output.
+- Toggle `auto_advance` off when you want to generate/approve seeds manually between runs.
+- In increment mode, the node logs every emitted seed so you can track the sequence even when the UI anchor stays at the start value.
+- Changing modes or editing the anchor seed resets the internal pointer so the next emission starts exactly where you expect.
+- Pair with Execution Logger to capture the seed history alongside tensor metadata.
+
+---
+
+### The Varianator — `h4_Varianator`
+
+**Purpose:** Rapid variation generator that reuses an existing latent, model bundle, and prompts to produce tightly scoped riffs.
+
+**In Plain Words:** Feed it a latent (or Engine output), pick a denoise profile, and The Varianator will spin up a stack of alternates—complete with deterministic seeds, optional prompt jitter, and GO PLUS ULTRA telemetry when you need receipts.
+
+```
+Engine output ──▶ latent/model/clip/vae ──▶ h4_Varianator ──▶ stacked variations + latent batch
+```
+
+#### Quick Start Cheat Sheet
+
+1. Wire The Engine's `latent`, `model`, and `vae` outputs into the matching Varianator sockets (all three are required). Bring the `clip` handle if you plan to re-encode prompts, enable jitter, or blend styles.
+2. Set `variation_count` (start with 3) and choose a `variation_profile` (`moderate` is the safest first pass).
+3. Pick a `seed_mode`: use `fixed` for gentle tweaks, `increment` for bracketed takes, or `random` for chaotic-but-repeatable variety.
+4. Configure `prompt_jitter_*` or `style_mix_*` only when a CLIP handle or conditioning inputs are present; fallbacks in the widget panel rely on that encoder.
+5. Optionally flip **GO PLUS ULTRA?!** to collect JSON/PNG artefacts, then run and inspect the `variations`, `latent_batch`, and `summary` outputs.
+
+> TL;DR: one latent in, multiple polished riffs out with the full audit trail attached.
+
+#### Feature Highlights
+
+- **Profile-driven denoise bands** — `minimal`, `moderate`, and `major` map to curated 0.30–0.55 denoise windows so you can explore subtle-to-bold rewrites without guessing numbers.
+- **Deterministic seed choreography** — choose `fixed`, `increment`, or `random` (anchored to `base_seed`), and the node logs every run so you can reproduce favourites later or restart a sequence midstream.
+- **Prompt jitter & style mixing** — append weighted prompt fragments per variation or blend in a secondary conditioning stream/prompt with a single ratio slider, all guarded by CLIP-aware fallbacks.
+- **CLIP-aware safeguards** — the node insists on a CLIP handle whenever it needs to re-encode text (prompt jitter, style mix, or prompt fallbacks) to prevent half-baked conditioning.
+- **GO PLUS ULTRA hooks** — flip the switch to emit JSON dossiers and optional PNG previews for every variation (perfect for audits or sharing).
+
+#### Inputs & Widgets
+
+| Widget | Description |
+| --- | --- |
+| `variation_count` | How many alternates to render (1–16). Each run clones the provided latent, so upstream branches remain untouched. |
+| `variation_profile` | Picks the denoise window. `minimal` enforces gentle edits, `major` allows aggressive remixing. |
+| `seed_mode` | `fixed` reuses `base_seed`, `increment` walks upward per variation, `random` draws a deterministic sequence from the same anchor. |
+| `base_seed` | Anchor seed used by the selected mode. |
+| `steps` / `cfg` | Shared sampler parameters for every variation. |
+| `sampler_name` / `scheduler_name` | Denoiser + schedule pair applied to each run. |
+| `go_ultra` | Reveals diagnostics settings and enables JSON/preview capture. |
+| `prompt_jitter_enabled` | When true, appends weighted prompt fragments for each variation. |
+| `prompt_jitter_strength` | Default ± window when custom token ranges are omitted. |
+| `prompt_jitter_tokens` | Optional token list (`token|min|max` per line) used by the jitter logic. |
+| `style_mix_enabled` | Toggles blending against a secondary conditioning or prompt. |
+| `style_mix_ratio` | Mix amount (0 = pure base prompt, 1 = pure style source). |
+| `base_positive_prompt` / `base_negative_prompt` | Fallback text prompts used when conditioning inputs are absent or when prompt jitter/style mix requires re-encoding. |
+| `style_mix_prompt` / `style_mix_negative_prompt` | Optional prompt strings when no style conditioning input is wired. |
+| `ultra_json_log` / `ultra_cache_artifacts` | Control whether GO PLUS ULTRA writes JSON/PNG artefacts to disk. |
+
+Mandatory connectors: `model`, `vae`, and `latent_in` (cloned straight from The Engine or another sampler). Optional sockets accept `clip`, `positive_in`, `negative_in`, plus style-conditioning fallbacks (`style_positive_in`, `style_negative_in`). Bring the CLIP handle or positive conditioning whenever you enable prompt jitter, style mixing, or rely on text fallback prompts.
+
+#### Variation Profiles at a Glance
+
+| Profile | Denoise Window | Best For |
+| --- | --- | --- |
+| `minimal` | 0.30–0.40 | Gentle pose tweaks, lighting nudges, fine colour work |
+| `moderate` | 0.40–0.50 | Costume swaps, expression changes, medium restyles |
+| `major` | 0.50–0.55 | Bold remixes, new compositions, aggressive camera moves |
+
+Even the hottest profile caps at 0.55 so you retain recognisable structure instead of starting from noise.
+
+#### Seed Modes in Plain English
+
+| Mode | Behaviour | When to Use |
+| --- | --- | --- |
+| `fixed` | Every variation reuses `base_seed`; denoise alone defines the drift. | Img2img refinement, “keep the pose but adjust the vibe” scenarios. |
+| `increment` | Seeds walk upward (`base_seed`, `base_seed + 1`, …). | Storyboards, iterative takes, pick-the-best-of-three workflows. |
+| `random` | Deterministic PRNG seeded by `base_seed`; looks random but logs every roll. | Spray-and-pray ideation that you can still reproduce later via the summary log. |
+
+#### Outputs
+
+- `variations` (`IMAGE`) — Batch of decoded images (one per variation).
+- `latent_batch` (`LATENT`) — Stack of latent tensors mirroring the image batch.
+- `summary` (`STRING`) — Human-readable log enumerating seeds, denoise values, jitter tokens, and any saved artefact paths.
+
+#### Workflow
+
+1. Feed the node a latent (e.g., Engine output) plus the model/clip/vae handles you want to reuse.
+2. Optionally connect positive/negative conditioning; otherwise provide fallback prompts for re-encoding.
+3. Pick a denoise profile, seed mode, and variation count to define the exploration envelope.
+4. Enable prompt jitter or style mix when you need extra texture across the batch.
+5. (Optional) Flip **GO PLUS ULTRA?!** to emit JSON logs and preview PNGs for archival.
+6. Run the workflow and inspect the stacked outputs or the text summary to cherry-pick favourites.
+
+#### GO PLUS ULTRA Notes
+
+When diagnostics are enabled the node records every variation (seed, denoise, jitter weights) in a timestamped JSON file and, when configured, saves the decoded preview PNGs alongside it. Artefacts land in `ComfyUI/temp/h4_varianator_ultra/` by default.
+
+#### Prompt Jitter Format Example
+
+```
+# token|min|max — weights are additive
+dramatic lighting|0.15|0.30
+studio backlight|0.10|0.20
+sparkle particles|0.00|0.18
+```
+
+Leave the list empty and the node instead applies ±`prompt_jitter_strength` around the base prompt for each variation.
+
+#### Style Mix Recipes
+
+- Wire a secondary conditioning payload into `style_positive_in`, set `style_mix_ratio` to `0.35`, and you get a 65/35 blend with the base prompt.
+- No extra conditioning? Provide `style_mix_prompt` / `style_mix_negative_prompt` strings and the node encodes them with the incoming CLIP handle.
+- Pair style mixing with `prompt_jitter_enabled` for controlled chaos: jitter keeps subtle differences, mix drags in the second style language.
 
 ---
 
@@ -919,6 +1029,14 @@ If issues persist, gather console logs (the toolkit prints namespace-prefixed en
 
 ---
 
+## Release Intel & Versioning
+
+- Update `TOOLKIT_VERSION`, `PLOT_NODE_VERSION`, and `DEBUG_NODE_VERSION` in `h4_Plot/nodes.py` when shipping releases.
+- Document major changes inside `h4_Plot/docs/h4_toolkit_brief.html` (already acts as the canonical change log and architecture brief).
+- Consider tagging Git releases aligned with version constants for traceability.
+
+---
+
 ## Appendix: Function Index
 
 | Module | Key Functions/Classes | Summary |
@@ -926,5 +1044,4 @@ If issues persist, gather console logs (the toolkit prints namespace-prefixed en
 | `h4_Plot/nodes.py` | `h4_PlotXY`, `h4_DebugATron3000`, `h4_DebugATronRouter`, `_invoke_sampler_with_compatibility`, `_collect_latent_snapshots`, `_tensor_anomalies`, etc. | Core logic for sampling, diagnostics, and metadata-driven routing. |
 | `h4_Plot/js/h4_ui.js` | `toggleUltraWidgets`, `ensureDynamicSockets`, `applyOrientationLayout`, extension registration | UI/UX companion for nodes. |
 | `h4_Plot/__init__.py` | `ensure_dependencies`, status banner, node exports | Dependency bootstrap and ComfyUI integration. |
-
-
+| `h4_Plot/docs/h4_toolkit_brief.html` | HTML dossier | Narrative architecture and remediation history. |
